@@ -5,7 +5,7 @@
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-A personal collection of Nuxt and Nitro related tools.
+A personal collection of Nuxt and Nitro tools.
 The goal of this project is mainly to simplify my prototyping process and learn a few things about data manipulation, Vitest, CI and others in a _laboratory-like_ environment.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
