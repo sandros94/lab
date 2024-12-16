@@ -36,8 +36,17 @@
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
+  "peerDependencies": {
+    "ioredis": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": true
+    }
+  },
   "dependencies": {
     "@nuxt/kit": "^3.14.1592",
+    "ioredis": "^5.4.1",
     "undio": "^0.2.0"
   },
   "devDependencies": {
