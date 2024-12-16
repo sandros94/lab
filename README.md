@@ -107,6 +107,10 @@ Mainly used internally for `useKV`, it currently only provides the following fun
 
 </details>
 
+## License
+
+Published under the [MIT](/LICENSE) license.
+
 
 <!-- Badges -->
 [npm-version-src]: https://img.shields.io/npm/v/@sandros94/lab/latest.svg?style=flat&colorA=020420&colorB=00DC82
