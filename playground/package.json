@@ -1,0 +1,14 @@
+{
+  "private": true,
+  "name": "@sandros94/lab-playground",
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "generate": "nuxi generate"
+  },
+  "dependencies": {
+    "@sandros94/lab": "latest",
+    "nuxt": "^3.14.1592"
+  }
+}

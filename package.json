@@ -1,0 +1,56 @@
+{
+  "name": "@sandros94/lab",
+  "resolutions": {
+    "@sandros94/lab": "workspace:*"
+  },
+  "version": "0.0.0",
+  "description": "A personal collection of Nuxt related tools.",
+  "repository": "your-org/@sandros94/lab",
+  "license": "MIT",
+  "type": "module",
+  "author": {
+    "name": "Sandro Circi",
+    "email": "sandro.circi@digitoolmedia.com"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/module.mjs",
+      "require": "./dist/module.cjs"
+    }
+  },
+  "main": "./dist/module.cjs",
+  "types": "./dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepack": "nuxt-module-build build",
+    "dev": "nuxi dev playground",
+    "dev:build": "nuxi build playground",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "release": "nr lint && nr prepack && changelogen --release --push --publish",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@nuxt/kit": "^3.14.1592"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "^1.6.4",
+    "@nuxt/eslint-config": "^0.7.3",
+    "@nuxt/module-builder": "^0.8.4",
+    "@nuxt/schema": "^3.14.1592",
+    "@nuxt/test-utils": "^3.15.1",
+    "changelogen": "^0.5.7",
+    "eslint": "^9.17.0",
+    "typescript": "~5.6",
+    "nuxt": "^3.14.1592",
+    "vitest": "^2.1.8",
+    "vue-tsc": "^2.1.10"
+  },
+  "packageManager": "pnpm@9.14.1"
+}
