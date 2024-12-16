@@ -1,11 +1,12 @@
-# LAB
+# Sandros94 LAB
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 [![Nuxt][nuxt-src]][nuxt-href]
 
-A personal collection of Nuxt related tools.
+A personal collection of Nuxt and Nitro related tools.
+The goal of this project is mainly to simplify my prototyping process and learn a few things about data manipulation, Vitest, CI and others in a _laboratory-like_ environment.
 
 - [✨ &nbsp;Release Notes](/CHANGELOG.md)
 <!-- - [🏀 Online playground](https://stackblitz.com/github/sandros94/lab?file=playground%2Fapp.vue) -->
@@ -13,10 +14,10 @@ A personal collection of Nuxt related tools.
 
 ## Features
 
-<!-- Highlight some of the features your module provide here -->
-- ⛰ &nbsp;Foo
-- 🚠 &nbsp;Bar
-- 🌲 &nbsp;Baz
+- `useKV`: integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
+  - **Gzip Compression/Decompression**: taking advantage of `node:zlib` it provides a set of functions to `useKV` to automatically store and retrive compressed data (server-only).
+- `useZlib`: used under the hood by `useKV` to provide gzip support during KV store operations.
+- **Built-in validation**: using [`valibot`](https://valibot.dev) and [`h3-valibot`](https://github.com/intevel/h3-valibot) under the hood (client and server).
 
 ## Quick Setup
 
@@ -26,12 +27,54 @@ Install the module to your Nuxt application with one command:
 npx nuxi module add @sandros94/lab
 ```
 
-That's it! You can now use LAB in your Nuxt app ✨
+To enable or disable various features you can simply edit your `nuxt.config.ts` like so:
 
-## Features
+```ts
+export default defineNuxtConfig({
+  modules: ['@sandros94/lab'],
 
-- KV
-- Zlib
+  lab: {
+    kv: true,     // default false
+    zlib: true,   // default false
+    valibot: true // default true
+  }
+})
+```
+
+`lab.kv` and `lab.zlib` also accept an object to edit their defaults.
+
+```ts
+export default defineNuxtConfig({
+  modules: ['@sandros94/lab'],
+
+  lab: {
+    kv: {
+      ttl: 10 * 60,
+    }
+  }
+})
+```
+
+You can also edit them via env vars: `NUXT_LAB_KV_*` and `NUXT_LAB_ZLIB_*`. Useful in situations like editing `NUXT_LAB_KV_URL` without rebuilding the application.
+
+## Utils
+
+The `@sandros94/lab` module includes some utility functions:
+
+### `useKV`
+
+Based on `useStorage` when combined with `zlib` it also receives the following functions:
+
+- `setGzip`: Compresses data using gzip and stores it in the KV store.
+- `getGzip`: Retrieves compressed data from the KV store without decompressing it.
+- `getGunzip`: Retrieves compressed data from the KV store, decompresses it, and returns the original data.
+
+### `useZlib`
+
+Mainly used internally for `useKV`, it currently only provides the following functions:
+
+- `gzip`: Compresses data using gzip.
+- `gunzip`: Decompresses gzip-compressed data.
 
 ## Contribution
 

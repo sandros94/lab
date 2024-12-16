@@ -17,6 +17,13 @@ export function useZlib(opts?: ZlibOptions) {
   useNitroHooks().callHookSync('lab:zlib:config', defOptions)
 
   return {
+    /**
+     * Compresses the given input data using gzip.
+     *
+     * @param {any} input - The data to be compressed. This can be any type of data, including strings, numbers, objects, etc.
+     * @param {ZlibOptions} [options] - Optional configuration options for the compression process.
+     * @returns A promise that resolves to the compressed data as a Buffer.
+     */
     gzip: (input: any, options: ZlibOptions = {}) => {
       const promise: Promise<Buffer> = new Promise(function (resolve, reject) {
         gzip(JSON.stringify(input), defu(options, opts, defOptions), function (error, result) {
@@ -26,6 +33,13 @@ export function useZlib(opts?: ZlibOptions) {
       })
       return promise
     },
+    /**
+     * Decompresses the given input data using gunzip.
+     *
+     * @param {InputType} input - The compressed data to be decompressed. This can be a string or ArrayBuffer.
+     * @param {ZlibOptions} [options] - Optional configuration options for the decompression process.
+     * @returns A promise that resolves to the decompressed data, where T is the type of the original data before compression.
+     */
     gunzip: async <T>(input: InputType, options: ZlibOptions = {}) => {
       const promise: Promise<Buffer> = new Promise(function (resolve, reject) {
         gunzip(input, defu(options, opts, defOptions), function (error, result) {
