@@ -1,5 +1,11 @@
 import type { ZlibOptions } from 'node:zlib'
-import { defineNuxtModule, addServerPlugin, addServerImports, createResolver } from '@nuxt/kit'
+import {
+  defineNuxtModule,
+  addServerPlugin,
+  addServerImports,
+  createResolver,
+  installModule,
+} from '@nuxt/kit'
 import type redisDriver from 'unstorage/drivers/redis'
 import type { Import } from 'unimport'
 import { defu } from 'defu'
@@ -8,6 +14,7 @@ import { defu } from 'defu'
 export interface ModuleOptions {
   kv?: boolean | Parameters<typeof redisDriver>[0]
   zlib?: boolean | ZlibOptions
+  valibot?: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -18,6 +25,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     kv: false,
     zlib: false,
+    valibot: true,
   },
   setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -26,6 +34,10 @@ export default defineNuxtModule<ModuleOptions>({
     labConfig.kv = defu(
       labConfig.kv,
       options.kv,
+    )
+    labConfig.zlib = defu(
+      labConfig.zlib,
+      options.zlib,
     )
 
     const serverImports: Import[] = [
@@ -47,6 +59,10 @@ export default defineNuxtModule<ModuleOptions>({
       if (labConfig.zlib) serverImports.push({ name: 'useKVZlib', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
       else serverImports.push({ name: 'useKV', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
     }
+
+    if (options.valibot)
+      installModule('h3-valibot/nuxt')
+      // nuxt.options.modules.push('h3-valibot/nuxt')
     // End enabled utils check
 
     addServerImports(serverImports)
