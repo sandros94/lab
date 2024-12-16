@@ -8,7 +8,7 @@ type InferCallback<HT, HN extends keyof HT> = HT[HN] extends HookCallback ? HT[H
 export function useNitroHooks() {
   const nitroApp = useNitroApp()
 
-  function hookSync<HN extends HookKeys<NitroRuntimeHooks>>(hookName: HN, ...param: Parameters<InferCallback<NitroRuntimeHooks, HN>>) {
+  function callHookSync<HN extends HookKeys<NitroRuntimeHooks>>(hookName: HN, ...param: Parameters<InferCallback<NitroRuntimeHooks, HN>>) {
     const results = nitroApp.hooks.callHookWith(hooks => hooks.map(hook => hook(param)), hookName, ...param)
     if (import.meta.dev && results && results.some(i => i && 'then' in i)) {
       console.error(`[lab] Error in \`${hookName}\` hook. Callback must be synchronous.`)
@@ -16,8 +16,12 @@ export function useNitroHooks() {
   }
 
   return {
-    hookSync,
+    callHookSync,
     hook: nitroApp.hooks.hook,
     hookOnce: nitroApp.hooks.hookOnce,
+    afterEach: nitroApp.hooks.afterEach,
+    beforeEach: nitroApp.hooks.beforeEach,
+    callHook: nitroApp.hooks.callHook,
+    callHookParallel: nitroApp.hooks.callHookParallel,
   }
 }

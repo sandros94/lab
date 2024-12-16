@@ -14,7 +14,7 @@ export function useZlib(opts?: ZlibOptions) {
   const defOptions = !runtimeConfig || typeof runtimeConfig === 'boolean'
     ? {}
     : runtimeConfig
-  useNitroHooks().hookSync('lab:zlib:config', defOptions)
+  useNitroHooks().callHookSync('lab:zlib:config', defOptions)
 
   return {
     gzip: (input: any, options: ZlibOptions = {}) => {
