@@ -6,7 +6,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-12-15',
 
   lab: {
-    kv: true,
+    kv: {
+      ttl: 10 * 60, // 10 minutes
+    },
     zlib: true,
   },
 })

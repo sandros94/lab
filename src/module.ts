@@ -34,6 +34,9 @@ export default defineNuxtModule<ModuleOptions>({
     labConfig.kv = defu(
       labConfig.kv,
       options.kv,
+      {
+        name: 'kv',
+      },
     )
     labConfig.zlib = defu(
       labConfig.zlib,
