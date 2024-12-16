@@ -37,17 +37,25 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "peerDependencies": {
-    "ioredis": ">=5"
+    "@nuxtjs/mdc": ">=0.11",
+    "ioredis": ">=5",
+    "undio": ">=0.2",
+    "unstorage": ">=1"
   },
   "peerDependenciesMeta": {
+    "@nuxtjs/mdc": {
+      "optional": true
+    },
     "ioredis": {
       "optional": true
     }
   },
   "dependencies": {
     "@nuxt/kit": "^3.14.1592",
+    "@nuxtjs/mdc": "^0.11.1",
     "ioredis": "^5.4.1",
-    "undio": "^0.2.0"
+    "undio": "^0.2.0",
+    "unstorage": "^1.13.1"
   },
   "devDependencies": {
     "@nuxt/devtools": "^1.6.4",
