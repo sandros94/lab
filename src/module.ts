@@ -4,6 +4,7 @@ import {
   addServerPlugin,
   addServerImports,
   createResolver,
+  installModule,
 } from '@nuxt/kit'
 import type redisDriver from 'unstorage/drivers/redis'
 import type { Import } from 'unimport'
@@ -65,7 +66,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (options.valibot) {
       ensureDependencyInstalled('h3-valibot')
-      nuxt.options.modules.push('h3-valibot/nuxt')
+      installModule('h3-valibot/nuxt')
     }
     // End check for enabled utils
 
