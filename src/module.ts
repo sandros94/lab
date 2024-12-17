@@ -4,10 +4,10 @@ import {
   addServerPlugin,
   addServerImports,
   createResolver,
-  installModule,
 } from '@nuxt/kit'
 import type redisDriver from 'unstorage/drivers/redis'
 import type { Import } from 'unimport'
+import { addDependency } from 'nypm'
 import { defu } from 'defu'
 
 // Module options TypeScript interface definition
@@ -50,7 +50,7 @@ export default defineNuxtModule<ModuleOptions>({
       },
     ]
 
-    // Check for enabled utils
+    // Start check for enabled utils
     if (labConfig.zlib)
       serverImports.push({
         name: 'useZlib',
@@ -63,10 +63,11 @@ export default defineNuxtModule<ModuleOptions>({
       else serverImports.push({ name: 'useKV', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
     }
 
-    if (options.valibot)
-      installModule('h3-valibot/nuxt')
-      // nuxt.options.modules.push('h3-valibot/nuxt')
-    // End enabled utils check
+    if (options.valibot) {
+      addDependency('h3-valibot')
+      nuxt.options.modules.push('h3-valibot/nuxt')
+    }
+    // End check for enabled utils
 
     addServerImports(serverImports)
   },
