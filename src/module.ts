@@ -7,7 +7,7 @@ import {
 } from '@nuxt/kit'
 import type redisDriver from 'unstorage/drivers/redis'
 import type { Import } from 'unimport'
-import { addDependency } from 'nypm'
+import { ensureDependencyInstalled } from 'nypm'
 import { defu } from 'defu'
 
 // Module options TypeScript interface definition
@@ -64,7 +64,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (options.valibot) {
-      addDependency('h3-valibot')
+      ensureDependencyInstalled('h3-valibot')
       nuxt.options.modules.push('h3-valibot/nuxt')
     }
     // End check for enabled utils
