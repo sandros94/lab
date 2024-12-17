@@ -11,6 +11,11 @@ on:
       - main
       - dev
   pull_request:
+    paths-ignore:
+      - 'playground/**'
+      - 'docs/**'
+      - '**/*.md'
+      - 'README.md'
     branches:
       - main
       - dev
@@ -19,13 +24,14 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - uses: shogo82148/actions-setup-redis@v1
-        name: Start and ping redis server
+        name: Start redis server
         with:
           redis-version: "6.x"
       - run: redis-cli ping
