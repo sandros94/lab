@@ -40,7 +40,7 @@ export function useZlib(opts?: ZlibOptions) {
      * @param {ZlibOptions} [options] - Optional configuration options for the decompression process.
      * @returns A promise that resolves to the decompressed data, where T is the type of the original data before compression.
      */
-    gunzip: async <T>(input: InputType, options: ZlibOptions = {}) => {
+    gunzip: async <T = unknown>(input: InputType, options: ZlibOptions = {}) => {
       const promise: Promise<Buffer> = new Promise(function (resolve, reject) {
         gunzip(input, defu(options, opts, defOptions), function (error, result) {
           if (!error) resolve(result)

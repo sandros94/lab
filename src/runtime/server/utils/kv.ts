@@ -1,14 +1,26 @@
-import type { TransactionOptions } from 'unstorage'
+import type { TransactionOptions, Storage, StorageValue } from 'unstorage'
 import { uint8ArrayToBase64 } from 'undio'
+import { destr } from 'destr'
 
 import { type ZlibOptions, useZlib } from './zlib'
 import { useStorage } from '#imports'
 
-function useKV(base?: string) {
+export type { TransactionOptions, Storage, StorageValue }
+
+export type MaybeDefined<T> = T extends any ? T : any
+
+export interface StorageZlib<T extends StorageValue = StorageValue> extends Storage<T> {
+  setGzip(key: string, input: undefined, kvOpts?: (TransactionOptions & { removeMeta?: boolean }) | boolean, zlibOpts?: ZlibOptions): Promise<void>
+  setGzip(key: string, input: any, kvOpts?: TransactionOptions, zlibOpts?: ZlibOptions): Promise<void>
+  getGzip<U extends (Buffer | string)>(key: string, kvOpts?: TransactionOptions): Promise<MaybeDefined<U> | null>
+  getGunzip<U extends T>(key: string, kvOpts?: TransactionOptions, zlibOpts?: ZlibOptions): Promise<U | null>
+}
+
+export function useKV<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
   return useStorage(base ? `CACHE:${base}` : 'CACHE')
 }
 
-function useKVZlib(base?: string, options?: ZlibOptions) {
+export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
   const kv = useStorage(base ? `CACHE:${base}` : 'CACHE')
   const { gzip, gunzip } = useZlib(options)
 
@@ -27,7 +39,7 @@ function useKVZlib(base?: string, options?: ZlibOptions) {
     kvOpts?: (TransactionOptions & {
       removeMeta?: boolean
     }) | boolean,
-    zlibOpts?: never,
+    zlibOpts?: ZlibOptions,
   ): Promise<void>
   async function setGzip(
     key: string,
@@ -57,7 +69,7 @@ function useKVZlib(base?: string, options?: ZlibOptions) {
   async function getGzip<T extends (Buffer | string)>(
     key: string,
     opts?: TransactionOptions,
-  ) {
+  ): Promise<MaybeDefined<T> | null> {
     return kv.getItemRaw<T>(key, opts)
   }
 
@@ -69,13 +81,14 @@ function useKVZlib(base?: string, options?: ZlibOptions) {
    * @param {ZlibOptions} [zlibOpts] - Optional configuration options for the decompression process.
    * @returns A promise that resolves to the decompressed data, or null if no data is found.
    */
-  async function getGunzip<T = any>(
+  async function getGunzip<T = unknown>(
     key: string,
     kvOpts?: TransactionOptions,
     zlibOpts?: ZlibOptions,
-  ): Promise<string | null | T> {
+  ): Promise<T | null> {
     const data = await getGzip(key, kvOpts)
-    if (data === null || typeof data === 'string') return data
+    if (data === null) return data
+    else if (typeof data === 'string') return destr<T>(data)
     const test = await gunzip<T>(data, zlibOpts)
     return test
   }
@@ -101,8 +114,3 @@ function serializeRaw(value: any) {
   const base64 = uint8ArrayToBase64(value, { dataURL: false })
   return BASE64_PREFIX + base64
 }
-/**
- * End `unjs/unstorage` implementation
- */
-
-export { type TransactionOptions, useKV, useKVZlib }
