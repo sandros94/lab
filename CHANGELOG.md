@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.0.3
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.2...v0.0.3)
+
+### 🩹 Fixes
+
+- Ci and project info ([93a7cb9](https://github.com/sandros94/lab/commit/93a7cb9))
+- **kv:** Typing and `destr` ([e6d9501](https://github.com/sandros94/lab/commit/e6d9501))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.2
 
 [compare changes](https://undefined/undefined/compare/v0.0.1...v0.0.2)
