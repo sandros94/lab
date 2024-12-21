@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-12-15',
 
   lab: {
+    monacoEditor: true,
     kv: {
       ttl: 10 * 60, // 10 minutes
     },

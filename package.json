@@ -44,6 +44,9 @@
     "unstorage": ">=1"
   },
   "peerDependenciesMeta": {
+    "@nuxt/scripts": {
+      "optional": true
+    },
     "@nuxtjs/mdc": {
       "optional": true
     },
@@ -56,6 +59,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.14.1592",
+    "@nuxt/scripts": "^0.9.5",
     "@nuxtjs/mdc": "^0.11.1",
     "defu": "^6.1.4",
     "h3-valibot": "^0.0.9",

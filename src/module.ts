@@ -1,6 +1,7 @@
 import type { ZlibOptions } from 'node:zlib'
 import {
   defineNuxtModule,
+  addComponent,
   addServerPlugin,
   addServerImports,
   createResolver,
@@ -13,6 +14,7 @@ import { defu } from 'defu'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
+  monacoEditor?: boolean
   kv?: boolean | Parameters<typeof redisDriver>[0]
   zlib?: boolean | ZlibOptions
   valibot?: boolean
@@ -24,6 +26,7 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'lab',
   },
   defaults: {
+    monacoEditor: false,
     kv: false,
     zlib: false,
     valibot: true,
@@ -67,6 +70,14 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.valibot) {
       ensureDependencyInstalled('h3-valibot')
       installModule('h3-valibot/nuxt')
+    }
+
+    if (options.monacoEditor) {
+      installModule('@nuxt/scripts')
+      addComponent({
+        name: 'MonacoEditor',
+        filePath: resolve('./runtime/app/components/monaco-editor'),
+      })
     }
     // End check for enabled utils
 
