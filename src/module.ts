@@ -33,15 +33,15 @@ export default defineNuxtModule<ModuleOptions>({
 
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
     labConfig.kv = defu(
-      labConfig.kv,
-      options.kv,
+      typeof labConfig.kv === 'boolean' ? {} : labConfig.kv,
+      typeof options.kv === 'boolean' ? {} : options.kv,
       {
         name: 'kv',
       },
     )
     labConfig.zlib = defu(
-      labConfig.zlib,
-      options.zlib,
+      typeof labConfig.zlib === 'boolean' ? {} : labConfig.zlib,
+      typeof options.zlib === 'boolean' ? {} : options.zlib,
     )
 
     const serverImports: Import[] = [
@@ -76,7 +76,7 @@ export default defineNuxtModule<ModuleOptions>({
 
 declare module '@nuxt/schema' {
   interface RuntimeConfig {
-    lab: ModuleOptions
+    lab: Pick<ModuleOptions, 'kv' | 'zlib'>
   }
 }
 
