@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, useScriptNpm } from '#imports'
+import { computed, ref, useTemplateRef, useScriptNpm } from '#imports'
 
 const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/min/'
 
 const editorEl = useTemplateRef('editor')
 const code = defineModel<string>({ required: true })
 const props = withDefaults(defineProps<{
-  autoResize?: boolean
+  fitContent?: boolean
   language?: string
   minimap?: boolean
   readOnly?: boolean
   theme?: string
   wordWrap?: 'on' | 'off'
 }>(), {
-  autoResize: true,
   language: 'mdc',
   minimap: true,
   readOnly: false,
@@ -22,6 +21,14 @@ const props = withDefaults(defineProps<{
 })
 const monaco = ref()
 const editor = ref()
+const styling = computed(() => {
+  if (props.fitContent) {
+    return {}
+  }
+  else {
+    return { height: '100%' }
+  }
+})
 
 // @ts-expect-error ts causing issues with nuxt imports
 const { status, load } = useScriptNpm({
@@ -108,14 +115,16 @@ const { status, load } = useScriptNpm({
       })
 
       const updateHeight = () => {
-        if (editorEl.value?.style.height || !props.autoResize) return
-        const contentHeight = Math.min(1000, editor.getContentHeight())
-        editorEl.value!.style.minHeight = `${contentHeight}px`
-        editor.layout({ width: editorEl.value!.offsetWidth, height: contentHeight })
+        if (!props.fitContent) return
+        const contentHeight = editor.getContentHeight()
+        editorEl.value!.style.height = `${contentHeight}px`
+        editor.layout({
+          width: editorEl.value!.offsetWidth,
+          height: Math.min(contentHeight, editorEl.value!.offsetHeight),
+        })
       }
 
       editor.onDidContentSizeChange(updateHeight)
-      updateHeight()
 
       return {
         editor,
@@ -153,5 +162,5 @@ watch(() => props.theme, (newTheme) => {
       {{ status }}
     </slot>
   </div>
-  <div v-else ref="editor" />
+  <div v-else ref="editor" :style="styling" />
 </template>
