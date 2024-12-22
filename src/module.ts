@@ -31,7 +31,7 @@ export default defineNuxtModule<ModuleOptions>({
     zlib: false,
     valibot: true,
   },
-  setup(options, nuxt) {
+  async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
@@ -68,8 +68,8 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (options.valibot) {
-      ensureDependencyInstalled('h3-valibot')
-      installModule('h3-valibot/nuxt')
+      await ensureDependencyInstalled('h3-valibot')
+        .then(async () => { await installModule('h3-valibot/nuxt') })
     }
 
     if (options.monacoEditor) {
