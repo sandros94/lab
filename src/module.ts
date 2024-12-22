@@ -73,7 +73,6 @@ export default defineNuxtModule<ModuleOptions>({
     }
 
     if (options.monacoEditor) {
-      installModule('@nuxt/scripts')
       addComponent({
         name: 'MonacoEditor',
         filePath: resolve('./runtime/app/components/monaco-editor'),
