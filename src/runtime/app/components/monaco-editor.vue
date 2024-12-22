@@ -6,12 +6,16 @@ const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/dev/'
 const editorEl = useTemplateRef('editor')
 const code = defineModel<string>({ required: true })
 const props = withDefaults(defineProps<{
+  autoResize?: boolean
   language?: string
+  minimap?: boolean
   readOnly?: boolean
   theme?: string
   wordWrap?: 'on' | 'off'
 }>(), {
+  autoResize: true,
   language: 'mdc',
+  minimap: true,
   readOnly: false,
   theme: 'vs-dark',
   wordWrap: 'on',
@@ -75,6 +79,7 @@ const { status, load } = useScriptNpm({
         language: props.language,
         tabSize: 2,
         wordWrap: props.wordWrap,
+        wrappingStrategy: 'advanced',
         insertSpaces: true,
         theme: props.theme,
         autoIndent: 'full',
@@ -83,7 +88,7 @@ const { status, load } = useScriptNpm({
         automaticLayout: true,
         readOnly: props.readOnly,
         minimap: {
-          enabled: true,
+          enabled: props.minimap,
         },
         lineNumbers: 'on',
         scrollBeyondLastLine: false,
@@ -101,6 +106,16 @@ const { status, load } = useScriptNpm({
       editor.onDidChangeModelContent(() => {
         code.value = editor.getValue()
       })
+
+      const updateHeight = () => {
+        if (editorEl.value?.style.height || !props.autoResize) return
+        const contentHeight = Math.min(1000, editor.getContentHeight())
+        editorEl.value!.style.minHeight = `${contentHeight}px`
+        editor.layout({ width: editorEl.value!.offsetWidth, height: contentHeight })
+      }
+
+      editor.onDidContentSizeChange(updateHeight)
+      updateHeight()
 
       return {
         editor,
