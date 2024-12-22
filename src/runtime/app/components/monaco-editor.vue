@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef, useScriptNpm } from '#imports'
 
-const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/dev/'
+const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/min/'
 
 const editorEl = useTemplateRef('editor')
 const code = defineModel<string>({ required: true })
@@ -26,7 +26,7 @@ const editor = ref()
 // @ts-expect-error ts causing issues with nuxt imports
 const { status, load } = useScriptNpm({
   packageName: 'monaco-editor',
-  file: 'dev/vs/loader.js',
+  file: 'min/vs/loader.js',
   version: '0.52.0',
   scriptOptions: {
     trigger: 'manual',
@@ -148,8 +148,10 @@ watch(() => props.theme, (newTheme) => {
 </script>
 
 <template>
-  <span v-if="status !== 'loaded'">
-    {{ status }}
-  </span>
+  <div v-if="status !== 'loaded'">
+    <slot :status="status">
+      {{ status }}
+    </slot>
+  </div>
   <div v-else ref="editor" />
 </template>
