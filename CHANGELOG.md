@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.5
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.4...v0.0.5)
+
+### 🩹 Fixes
+
+- **vlidation:** Await deps check ([6fa81ee](https://github.com/sandros94/lab/commit/6fa81ee))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.4
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.3...v0.0.4)
