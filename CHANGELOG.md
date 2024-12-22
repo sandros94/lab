@@ -1,6 +1,29 @@
 # Changelog
 
 
+## v0.0.4
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.3...v0.0.4)
+
+### 🚀 Enhancements
+
+- `MonacoEditor` component ([3d704f8](https://github.com/sandros94/lab/commit/3d704f8))
+- **MonacoEditor:** Auto resize height ([27dfb96](https://github.com/sandros94/lab/commit/27dfb96))
+
+### 🩹 Fixes
+
+- Don't pass boolean as `kv`/`zlib` config ([6a233fc](https://github.com/sandros94/lab/commit/6a233fc))
+- **MonacoEditor:** Use minified cdn and add default slot during loading ([9a4d081](https://github.com/sandros94/lab/commit/9a4d081))
+- **MonacoEditor:** Use `unhead` instead ([e99e670](https://github.com/sandros94/lab/commit/e99e670))
+
+### 🎨 Styles
+
+- **MonacoEditor:** Size and auto-resize ([d81234c](https://github.com/sandros94/lab/commit/d81234c))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.3
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.2...v0.0.3)
