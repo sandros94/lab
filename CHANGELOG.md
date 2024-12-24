@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v0.0.6
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.5...v0.0.6)
+
+### 🩹 Fixes
+
+- Build-time tree-shaking ([7b4aa9e](https://github.com/sandros94/lab/commit/7b4aa9e))
+
+### 💅 Refactors
+
+- **kv:** Add hook and fix runtime options ([549dc6e](https://github.com/sandros94/lab/commit/549dc6e))
+
+### 📦 Build
+
+- Fix types and default options ([cfc494f](https://github.com/sandros94/lab/commit/cfc494f))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.5
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.4...v0.0.5)
