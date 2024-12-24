@@ -56,24 +56,24 @@ export default defineNuxtModule<ModuleOptions>({
     ]
 
     // Start check for enabled utils
-    if (labConfig.zlib)
+    if (options.zlib !== false)
       serverImports.push({
         name: 'useZlib',
         from: resolve('./runtime/server/utils/zlib'),
       })
 
-    if (labConfig.kv) {
+    if (options.kv !== false) {
       addServerPlugin(resolve('./runtime/server/plugins/kv'))
-      if (labConfig.zlib) serverImports.push({ name: 'useKVZlib', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
+      if (options.zlib !== false) serverImports.push({ name: 'useKVZlib', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
       else serverImports.push({ name: 'useKV', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
     }
 
-    if (options.valibot) {
+    if (options.valibot !== false) {
       await ensureDependencyInstalled('h3-valibot')
         .then(async () => { await installModule('h3-valibot/nuxt') })
     }
 
-    if (options.monacoEditor) {
+    if (options.monacoEditor !== false) {
       addComponent({
         name: 'MonacoEditor',
         filePath: resolve('./runtime/app/components/monaco-editor'),
