@@ -7,17 +7,20 @@ import {
   createResolver,
   installModule,
 } from '@nuxt/kit'
-import type redisDriver from 'unstorage/drivers/redis'
+import type { RedisOptions } from 'unstorage/drivers/redis'
 import type { Import } from 'unimport'
 import { ensureDependencyInstalled } from 'nypm'
 import { defu } from 'defu'
+import {
+  DEFAULT_KV_OPTIONS,
+} from './runtime/kv'
 
 // Module options TypeScript interface definition
 export interface ModuleOptions {
-  monacoEditor?: boolean
-  kv?: boolean | Parameters<typeof redisDriver>[0]
+  kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
   valibot?: boolean
+  monacoEditor?: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -26,24 +29,22 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'lab',
   },
   defaults: {
-    monacoEditor: false,
     kv: false,
     zlib: false,
     valibot: true,
+    monacoEditor: false,
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
     labConfig.kv = defu(
-      typeof labConfig.kv === 'boolean' ? {} : labConfig.kv,
+      labConfig.kv,
       typeof options.kv === 'boolean' ? {} : options.kv,
-      {
-        name: 'kv',
-      },
+      DEFAULT_KV_OPTIONS,
     )
     labConfig.zlib = defu(
-      typeof labConfig.zlib === 'boolean' ? {} : labConfig.zlib,
+      labConfig.zlib,
       typeof options.zlib === 'boolean' ? {} : options.zlib,
     )
 
@@ -86,12 +87,16 @@ export default defineNuxtModule<ModuleOptions>({
 
 declare module '@nuxt/schema' {
   interface RuntimeConfig {
-    lab: Pick<ModuleOptions, 'kv' | 'zlib'>
+    lab: {
+      kv?: RedisOptions
+      zlib?: ZlibOptions
+    }
   }
 }
 
 declare module 'nitropack' {
   interface NitroRuntimeHooks {
+    'lab:kv:config': (options: RedisOptions) => void
     'lab:zlib:config': (options: ZlibOptions) => void
   }
 }
