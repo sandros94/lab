@@ -23,6 +23,8 @@ export interface ModuleOptions {
   monacoEditor?: boolean
 }
 
+export { type RedisOptions, DEFAULT_KV_OPTIONS }
+
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: '@sandros94/lab',
@@ -41,7 +43,7 @@ export default defineNuxtModule<ModuleOptions>({
     labConfig.kv = defu(
       labConfig.kv,
       typeof options.kv === 'boolean' ? {} : options.kv,
-      DEFAULT_KV_OPTIONS,
+      DEFAULT_KV_OPTIONS as RedisOptions,
     )
     labConfig.zlib = defu(
       labConfig.zlib,
