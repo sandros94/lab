@@ -1,9 +1,11 @@
+import type { RedisOptions } from 'unstorage/drivers/redis'
+
 /**
  * from upstream DEFAULTS_REDIS_OPTIONS
  * Source: https://github.com/redis/ioredis/blob/1d425da1066dcdd9c944b07424e9042a59cbaa31/lib/redis/RedisOptions.ts#L197-L248
  */
 
-export const DEFAULT_KV_OPTIONS = {
+const DEFAULT_KV_OPTIONS: RedisOptions = {
   // Connection
   port: 6379,
   host: 'localhost',
@@ -42,3 +44,5 @@ export const DEFAULT_KV_OPTIONS = {
   autoPipeliningIgnoredCommands: [],
   sentinelMaxConnections: 10,
 }
+
+export { type RedisOptions, DEFAULT_KV_OPTIONS }

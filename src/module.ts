@@ -7,11 +7,11 @@ import {
   createResolver,
   installModule,
 } from '@nuxt/kit'
-import type { RedisOptions } from 'unstorage/drivers/redis'
 import type { Import } from 'unimport'
 import { ensureDependencyInstalled } from 'nypm'
 import { defu } from 'defu'
 import {
+  type RedisOptions,
   DEFAULT_KV_OPTIONS,
 } from './runtime/kv'
 
@@ -43,7 +43,7 @@ export default defineNuxtModule<ModuleOptions>({
     labConfig.kv = defu(
       labConfig.kv,
       typeof options.kv === 'boolean' ? {} : options.kv,
-      DEFAULT_KV_OPTIONS as RedisOptions,
+      DEFAULT_KV_OPTIONS,
     )
     labConfig.zlib = defu(
       labConfig.zlib,
