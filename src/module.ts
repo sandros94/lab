@@ -39,6 +39,8 @@ export default defineNuxtModule<ModuleOptions>({
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
 
+    nuxt.options.alias['#lab'] = resolve('./runtime')
+
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
     labConfig.kv = defu(
       labConfig.kv,
