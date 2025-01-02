@@ -4,7 +4,7 @@ import { setup, $fetch } from '@nuxt/test-utils/e2e'
 
 describe('zlib', async () => {
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+    rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
   })
 
   const dataBody = {

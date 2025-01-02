@@ -4,7 +4,7 @@ import { describe, it, expect } from 'vitest'
 
 describe('kv-zlib', async () => {
   await setup({
-    rootDir: fileURLToPath(new URL('./fixtures/basic', import.meta.url)),
+    rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
   })
 
   const dataId = 1994
