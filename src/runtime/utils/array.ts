@@ -1,3 +1,20 @@
+export function merge<
+  T extends Array<unknown> | ReadonlyArray<unknown>,
+  U extends Array<unknown> | ReadonlyArray<unknown>,
+>(
+  a: T,
+  b: U,
+  predicate = (a: T[number], b: U[number]) => a === b,
+): Array<T[number] | U[number]> {
+  const _a = [...a]
+  b.forEach((bItem: U[number]) => (
+    _a.some((aItem: T[number]) => predicate(aItem, bItem))
+      ? null
+      : _a.push(bItem)
+  ))
+  return _a
+}
+
 export function shuffle<T extends Array<unknown> | ReadonlyArray<unknown>>(
   array: T,
   limit?: number,

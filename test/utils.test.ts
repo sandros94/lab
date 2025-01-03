@@ -9,6 +9,19 @@ describe('utils', async () => {
 
   describe('array', async () => {
     const names = ['Buonarroti', 'Da Vinci', 'di Niccolò di Betto Bardi', 'Sanzio']
+    const fruits = ['Apple', 'Banana', 'Cherry']
+
+    it('Successfully merges names and fruits', async () => {
+      const data = await $fetch<string[]>('/api/utils/array/merge', {
+        method: 'POST',
+        body: {
+          arrayA: names,
+          arrayB: fruits,
+        },
+      })
+
+      assert.includeMembers([...names, ...fruits], data)
+    })
 
     it('Successfully shuffle names', async () => {
       const data = await $fetch<string[]>('/api/utils/array/shuffle', {
