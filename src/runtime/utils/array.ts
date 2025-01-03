@@ -1,7 +1,7 @@
 export function shuffle<T extends Array<unknown> | ReadonlyArray<unknown>>(
   array: T,
   limit?: number,
-): ShuffleReturn<T> {
+): Array<T[number]> {
   const arrayLength = array.length
   const shuffleCount = Math.min(limit ?? arrayLength, arrayLength)
 
@@ -16,12 +16,7 @@ export function shuffle<T extends Array<unknown> | ReadonlyArray<unknown>>(
 
   const result = indices
     .slice(0, shuffleCount)
-    .map(index => array[index]) as ShuffleReturn<T>
+    .map(index => array[index])
 
   return result
 }
-
-export type ShuffleReturn<T extends Array<unknown> | ReadonlyArray<unknown>> =
-  T extends ReadonlyArray<infer U>
-    ? U[]
-    : T
