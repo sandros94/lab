@@ -57,7 +57,7 @@
   },
   "dependencies": {
     "@nuxt/kit": "^3.14.1592",
-    "@nuxtjs/mdc": "^0.11.1",
+    "@nuxtjs/mdc": "^0.12.0",
     "@unhead/vue": "^1.11.14",
     "defu": "^6.1.4",
     "h3-valibot": "^0.0.9",
