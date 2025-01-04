@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v0.0.7
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.6...v0.0.7)
+
+### 🚀 Enhancements
+
+- Add nuxt alias ([d344087](https://github.com/sandros94/lab/commit/d344087))
+- Array shuffle util ([3b20267](https://github.com/sandros94/lab/commit/3b20267))
+- Array merge util ([220bd40](https://github.com/sandros94/lab/commit/220bd40))
+
+### 🩹 Fixes
+
+- Prevent optimizing jsdelivr ([c179da1](https://github.com/sandros94/lab/commit/c179da1))
+
+### 🏡 Chore
+
+- Update `@nuxtjs/mdc` ([9adbe87](https://github.com/sandros94/lab/commit/9adbe87))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.6
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.5...v0.0.6)

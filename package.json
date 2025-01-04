@@ -3,7 +3,7 @@
   "resolutions": {
     "@sandros94/lab": "workspace:*"
   },
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A personal collection of Nuxt and Nitro tools.",
   "repository": "sandros94/lab",
   "license": "MIT",
