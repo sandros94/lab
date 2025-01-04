@@ -3,6 +3,7 @@ import { useScript } from '@unhead/vue'
 import { computed, ref, createError, onMounted, watch, useTemplateRef } from '#imports'
 
 const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/min/'
+const MDC_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@0.2.0/'
 
 const editorEl = useTemplateRef('editor')
 const code = defineModel<string>({ required: true })
@@ -53,8 +54,7 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       },
     }
 
-    // @ts-expect-error: in-browser event
-    const { language: monarchMdc } = await import('https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@0.2.0/dist/index.mjs')
+    const { language: monarchMdc } = await import(`${MDC_CDN_BASE}dist/index.mjs`)
     monaco.languages.register({ id: 'mdc' })
     monaco.languages.setMonarchTokensProvider('mdc', monarchMdc)
     monaco.languages.setLanguageConfiguration('mdc', {
