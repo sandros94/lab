@@ -6,6 +6,5 @@ export default defineEventHandler(async (event) => {
     limit: v.optional(v.number()),
   }))
 
-  const shuffled = shuffle(array, limit)
-  return shuffled
+  return shuffle(array, limit)
 })
