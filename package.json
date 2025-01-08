@@ -79,6 +79,7 @@
   "packageManager": "pnpm@9.15.3",
   "resolutions": {
     "@sandros94/lab": "workspace:*",
-    "vue-tsc": "^2.2.0"
+    "typescript": "5.6.3",
+    "vue-tsc": "2.1.6"
   }
 }
