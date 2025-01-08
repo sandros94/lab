@@ -21,7 +21,7 @@ export function useKV<T extends StorageValue = StorageValue>(base?: string): Sto
 }
 
 export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
-  const kv = useStorage(base ? `CACHE:${base}` : 'CACHE')
+  const kv = useStorage<T>(base ? `CACHE:${base}` : 'CACHE')
   const { gzip, gunzip } = useZlib(options)
 
   /**
@@ -55,7 +55,7 @@ export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, 
   ): Promise<void> {
     if (input === 'undefined') return kv.removeItem(key)
     const data = await gzip(input, zlibOpts)
-    return kv.setItem(key, serializeRaw(data), kvOpts)
+    return kv.setItemRaw<string>(key, serializeRaw(data), kvOpts)
   }
 
   /**
