@@ -1,13 +1,10 @@
-import type { InputType, ZlibOptions } from 'node:zlib'
 import { gzip, gunzip } from 'node:zlib'
 import { toText } from 'undio'
 import { destr } from 'destr'
 import { defu } from 'defu'
 
-import { useNitroHooks } from './hooks'
-import { useRuntimeConfig } from '#imports'
-
-export type { ZlibOptions }
+import { useNitroHooks, useRuntimeConfig } from '#imports'
+import type { InputType, ZlibOptions } from '#lab/types'
 
 export function useZlib(opts?: ZlibOptions) {
   const runtimeConfig = useRuntimeConfig().lab.zlib

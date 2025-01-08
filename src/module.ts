@@ -7,23 +7,18 @@ import {
   createResolver,
   installModule,
 } from '@nuxt/kit'
+import { defu } from 'defu'
 import type { Import } from 'unimport'
 import { ensureDependencyInstalled } from 'nypm'
-import { defu } from 'defu'
-import {
-  type RedisOptions,
-  DEFAULT_KV_OPTIONS,
-} from './runtime/kv'
+import type { RedisOptions } from 'unstorage/drivers/redis'
+import { DEFAULT_KV_OPTIONS } from './runtime/options'
 
-// Module options TypeScript interface definition
 export interface ModuleOptions {
   kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
   valibot?: boolean
   monacoEditor?: boolean
 }
-
-export { type RedisOptions, DEFAULT_KV_OPTIONS }
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {

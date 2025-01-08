@@ -1,20 +1,16 @@
-import type { TransactionOptions, Storage, StorageValue } from 'unstorage'
 import { uint8ArrayToBase64 } from 'undio'
 import { destr } from 'destr'
 
-import { type ZlibOptions, useZlib } from './zlib'
 import { useStorage } from '#imports'
-
-export type { TransactionOptions, Storage, StorageValue }
-
-export type MaybeDefined<T> = T extends any ? T : any
-
-export interface StorageZlib<T extends StorageValue = StorageValue> extends Storage<T> {
-  setGzip(key: string, input: undefined, kvOpts?: (TransactionOptions & { removeMeta?: boolean }) | boolean, zlibOpts?: ZlibOptions): Promise<void>
-  setGzip(key: string, input: any, kvOpts?: TransactionOptions, zlibOpts?: ZlibOptions): Promise<void>
-  getGzip<U extends (Buffer | string)>(key: string, kvOpts?: TransactionOptions): Promise<MaybeDefined<U> | null>
-  getGunzip<U extends T>(key: string, kvOpts?: TransactionOptions, zlibOpts?: ZlibOptions): Promise<U | null>
-}
+import { useZlib } from '#lab/server/utils/zlib'
+import type {
+  MaybeDefined,
+  TransactionOptions,
+  Storage,
+  StorageValue,
+  StorageZlib,
+  ZlibOptions,
+} from '#lab/types'
 
 export function useKV<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
   return useStorage(base ? `CACHE:${base}` : 'CACHE')
