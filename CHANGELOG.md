@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v0.0.8
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.7...v0.0.8)
+
+### 🚀 Enhancements
+
+- Add custom logger inspired by https://github.com/nuxt/nuxt/pull/30408 ([e873f3f](https://github.com/sandros94/lab/commit/e873f3f))
+
+### 🩹 Fixes
+
+- `useKV` zlib types ([593f42f](https://github.com/sandros94/lab/commit/593f42f))
+- Module types ([28fc8e7](https://github.com/sandros94/lab/commit/28fc8e7))
+
+### 🏡 Chore
+
+- Update all deps ([bbc8752](https://github.com/sandros94/lab/commit/bbc8752))
+- Revert ts ([a33a59a](https://github.com/sandros94/lab/commit/a33a59a))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.7
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.6...v0.0.7)
