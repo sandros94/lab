@@ -7,9 +7,19 @@ export default defineNuxtConfig({
 
   lab: {
     monacoEditor: true,
+
     kv: {
       ttl: 10 * 60, // 10 minutes
     },
+
     zlib: true,
+
+    ws: {
+      route: '/_ws',
+      channels: {
+        internal: ['_internal'],
+        defaults: ['session'],
+      },
+    },
   },
 })
