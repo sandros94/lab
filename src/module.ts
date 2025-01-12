@@ -1,3 +1,4 @@
+import type { ZlibOptions } from 'node:zlib'
 import {
   defineNuxtModule,
   addComponent,
@@ -13,11 +14,13 @@ import { ensureDependencyInstalled } from 'nypm'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
 import type {
+  DeepPartial,
   RedisOptions,
-  ZlibOptions,
+  WSConfig,
 } from './runtime/types'
 
 export interface ModuleOptions {
+  ws?: boolean | DeepPartial<WSConfig>
   kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
   valibot?: boolean
@@ -30,6 +33,7 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'lab',
   },
   defaults: {
+    ws: false,
     kv: false,
     zlib: false,
     valibot: true,
@@ -41,6 +45,7 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.alias['#lab'] = resolve('./runtime')
 
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
+    const labPublicConfig = nuxt.options.runtimeConfig.public.lab ||= {}
     labConfig.kv = defu(
       labConfig.kv,
       typeof options.kv === 'boolean' ? {} : options.kv,
@@ -49,6 +54,16 @@ export default defineNuxtModule<ModuleOptions>({
     labConfig.zlib = defu(
       labConfig.zlib,
       typeof options.zlib === 'boolean' ? {} : options.zlib,
+    )
+    labPublicConfig.ws = defu(
+      labPublicConfig.ws,
+      typeof options.ws === 'boolean' ? {} : options.ws,
+      {
+        channels: {
+          defaults: [],
+          internal: [],
+        },
+      },
     )
 
     const appImports: Import[] = [
@@ -88,6 +103,39 @@ export default defineNuxtModule<ModuleOptions>({
         filePath: resolve('./runtime/app/components/monaco-editor'),
       })
     }
+
+    if (options.ws !== false) {
+      (nuxt.options.nitro.experimental ||= {}).websocket = true
+
+      await ensureDependencyInstalled('@vueuse/core')
+        .then(() => {
+          appImports.push({
+            name: 'useWSState',
+            from: resolve('./runtime/app/composables/ws'),
+          })
+          appImports.push({
+            name: 'useWS',
+            from: resolve('./runtime/app/composables/ws'),
+          })
+        })
+
+      serverImports.push({
+        name: 'wsHooks',
+        from: resolve('./runtime/server/utils/ws'),
+      })
+      serverImports.push({
+        name: 'wsBroadcast',
+        from: resolve('./runtime/server/utils/ws'),
+      })
+      serverImports.push({
+        name: 'getWSChannels',
+        from: resolve('./runtime/server/utils/ws'),
+      })
+      serverImports.push({
+        name: 'useWebSocketHandler',
+        from: resolve('./runtime/server/utils/ws'),
+      })
+    }
     // End check for enabled utils
 
     addImports(appImports)
@@ -100,6 +148,11 @@ declare module '@nuxt/schema' {
     lab: {
       kv?: RedisOptions
       zlib?: ZlibOptions
+    }
+  }
+  interface PublicRuntimeConfig {
+    lab: {
+      ws?: DeepPartial<WSConfig>
     }
   }
 }

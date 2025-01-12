@@ -7,11 +7,13 @@ export type MultiState<T extends Record<string, any>> = {
 }
 
 /**
- * Creates multiple reactive states from an array of keys
- * @param keys Array of keys matching the generic type object
- * @param options Configuration options
- * @param options.prefix Optional prefix for state keys
- * @returns Object containing reactive states for each key
+ * Create multiple global reactive refs that will be hydrated but not shared across ssr requests
+ *
+ * @template T - Type of the channel data mapping
+ * @param {MaybeRef<Array<keyof T | string>>} [keys] - Array of keys matching the generic type object
+ * @param {object} [options] - Configuration options
+ * @param {string} [options.prefix] - Prefix for state keys
+ * @returns {MultiState<T>} Object containing reactive states for each key
  */
 export function useMultiState<T extends Record<string, any>>(
   keys: MaybeRef<Array<keyof T>>,

@@ -45,6 +45,9 @@
     "@nuxtjs/mdc": {
       "optional": true
     },
+    "@vueuse/code": {
+      "optional": true
+    },
     "h3-valibot": {
       "optional": true
     },
@@ -56,6 +59,7 @@
     "@nuxt/kit": "^3.15.1",
     "@nuxtjs/mdc": "^0.12.1",
     "@unhead/vue": "^1.11.15",
+    "@vueuse/core": "^12.4.0",
     "defu": "^6.1.4",
     "h3-valibot": "^0.0.9",
     "ioredis": "^5.4.2",
