@@ -75,7 +75,7 @@ export function useWS<
   options?: WSOptions,
 ): UseWSReturn<T> {
   const { route } = useRuntimeConfig().public.lab.ws as WSConfig
-  const { query, route: optsRoute, ...opts } = options || {}
+  const { query, route: optsRoute, prefix, ...opts } = options || {}
   const path = optsRoute || route
 
   if (!path) {
@@ -83,7 +83,7 @@ export function useWS<
   }
 
   const _channels = channels === undefined ? undefined : toRef(channels)
-  const states = useWSState<T>(_channels, { prefix: stateKeyPrefix })
+  const states = useWSState<T>(_channels, { prefix })
 
   const _query = reactive({
     ...query,

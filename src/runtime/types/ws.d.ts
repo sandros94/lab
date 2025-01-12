@@ -21,6 +21,7 @@ export interface WSConfig {
 
 export interface WSOptions extends UseWebSocketOptions {
   route?: string
+  prefix?: string
   query?: Record<string, any>
 }
 
