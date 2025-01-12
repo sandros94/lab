@@ -143,6 +143,36 @@ export default useWebSocketHandler({
 })
 ```
 
+#### Reactivity notes
+
+The `state` object returned by `useWS` (and `useWSStates`) is not reactive, while its properties are indeed refs. This means that as long as you are accessing static channels you can safely destructure them, but not if they are based on dynamic ones.
+
+```ts
+// The following works
+const { states } = useWS<{
+  chat: {    // Defined here
+    [userId: string]: string
+  }
+  session: { // Defined in nuxt.config.ts via `lab.ws.channels.defaults`
+    user: number
+  }
+}>(['chat'])
+const { chat, session } = states
+
+// The following does not work
+const selectedChannels = ref([])
+const { states } = useWS<{
+  [channel: string]: {
+    [key: string]: string
+  }
+}>(selectedChannels)
+const { myDynamicChannel } = states
+
+// Instead you should access it directly as
+states['myDynamicChannel']
+```
+
+
 ## Contribution
 
 <details>
