@@ -17,6 +17,7 @@ The goal of this project is mainly to simplify my prototyping process and learn 
 - `useKV`: integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
   - **Gzip Compression/Decompression**: taking advantage of `node:zlib` it provides a set of functions to `useKV` to automatically store and retrive compressed data (server-only).
 - `useZlib`: used under the hood by `useKV` to provide gzip support during KV store operations.
+- `useWS`: A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
 - **Built-in validation**: using [`valibot`](https://valibot.dev) and [`h3-valibot`](https://github.com/intevel/h3-valibot) under the hood (client and server).
 
 ## Quick Setup
@@ -75,6 +76,72 @@ Mainly used internally for `useKV`, it currently only provides the following fun
 
 - `gzip`: Compresses data using gzip.
 - `gunzip`: Decompresses gzip-compressed data.
+
+### `useWS`
+
+A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
+
+- 🔄 Automatic reconnection
+- 📦 Built-in shared state management per channel
+- 🔐 Type-safe messages and channels
+- 📢 Hooking system to trigger global or per-channel messages
+- 💾 Easily add persistent storage with `useKV`
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['@sandros94/lab'],
+  lab: {
+    ws: {
+      route: '/_ws',             // WebSocket endpoint
+      channels: {
+        internal: ['_internal'], // Protected system channels
+        defaults: ['session'],   // Auto-subscribed channels
+      }
+    }
+  }
+})
+```
+
+Client-Side:
+```ts
+// Request additional channels during connection
+const channels = ref(['chat', 'notifications'])
+
+const { states, status, send } = useWS<{
+  chat: {
+    [userId: string]: string
+  }
+  notifications: {
+    message: string
+  }
+}>(channels)
+
+// Send message to chat channel
+send('chat', { 
+  [userId]: 'Hello world!'
+})
+
+// Access state
+const chatMessages = toRef(states, 'chat')
+```
+
+Server-Side:
+```ts
+// server/routes/_ws.ts
+export default useWebSocketHandler({
+  async open(peer, { channels }) {
+    // Subscribe to requested channels
+    channels.forEach(channel => peer.subscribe(channel))
+  },
+
+  async message(peer, message, { channels }) {
+    const { channel, data } = message.json()
+    // Broadcast to channel subscribers
+    peer.publish(channel, JSON.stringify({ channel, data }))
+  }
+})
+```
 
 ## Contribution
 
