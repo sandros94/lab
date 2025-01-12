@@ -33,6 +33,7 @@ export default createConfigForNuxt({
 
         // Project specific overrides
         '@typescript-eslint/no-explicit-any': 'off',
+        'vue/multi-word-component-names': 'off',
       },
     },
   )
