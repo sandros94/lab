@@ -1,6 +1,28 @@
 # Changelog
 
 
+## v0.0.9
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.8...v0.0.9)
+
+### 🚀 Enhancements
+
+- `useMultiState` composable ([1a81549](https://github.com/sandros94/lab/commit/1a81549))
+- Reactive WebSocket with shared state managment ([0c42410](https://github.com/sandros94/lab/commit/0c42410))
+
+### 🩹 Fixes
+
+- Ci ([591d1d7](https://github.com/sandros94/lab/commit/591d1d7))
+
+### 🏡 Chore
+
+- Rearrange types ([41ec7b4](https://github.com/sandros94/lab/commit/41ec7b4))
+- Update deps ([e8d13b1](https://github.com/sandros94/lab/commit/e8d13b1))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.8
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.7...v0.0.8)
