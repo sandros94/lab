@@ -51,7 +51,7 @@ export default defineNuxtModule<ModuleOptions>({
       typeof options.zlib === 'boolean' ? {} : options.zlib,
     )
 
-    const clientImports: Import[] = [
+    const appImports: Import[] = [
       {
         name: 'useMultiState',
         from: resolve('./runtime/app/composables/multi-state'),
@@ -90,7 +90,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
     // End check for enabled utils
 
-    addImports(clientImports)
+    addImports(appImports)
     addServerImports(serverImports)
   },
 })
