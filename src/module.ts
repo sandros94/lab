@@ -18,19 +18,14 @@ import { DEFAULT_KV_OPTIONS } from './runtime/options'
 // TODO: https://github.com/nuxt/module-builder/issues/375
 interface WSConfig {
   route?: string
-  channels: {
-    defaults: Array<string>
-    internal: Array<string>
+  channels?: {
+    defaults?: Array<string>
+    internal?: Array<string>
   }
-}
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object
-    ? DeepPartial<T[P]>
-    : T[P]
 }
 
 export interface ModuleOptions {
-  ws?: boolean | DeepPartial<WSConfig>
+  ws?: boolean | WSConfig
   kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
   valibot?: boolean
@@ -162,7 +157,7 @@ declare module '@nuxt/schema' {
   }
   interface PublicRuntimeConfig {
     lab: {
-      ws?: DeepPartial<WSConfig>
+      ws?: WSConfig
     }
   }
 }

@@ -12,11 +12,10 @@ import {
   reactive,
   toRef,
   watch,
-  createError,
-  useMultiState,
   useRequestURL,
   useRuntimeConfig,
 } from '#imports'
+import { useMultiState } from '#lab/app/composables/multi-state'
 import { merge } from '#lab/utils'
 import type {
   AllChannels,
@@ -80,11 +79,7 @@ export function useWS<
   const path = optsRoute || route
 
   if (!path) {
-    throw createError({
-      message: '[useWS] `route` is required in options or `nuxt.config.ts`',
-      statusCode: 500,
-      fatal: true,
-    })
+    throw new Error('[useWS] `route` is required in options or `nuxt.config.ts`')
   }
 
   const _channels = channels === undefined ? undefined : toRef(channels)
