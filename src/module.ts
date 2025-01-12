@@ -2,6 +2,7 @@ import type { ZlibOptions } from 'node:zlib'
 import {
   defineNuxtModule,
   addComponent,
+  addImports,
   addServerPlugin,
   addServerImports,
   createResolver,
@@ -47,6 +48,12 @@ export default defineNuxtModule<ModuleOptions>({
       typeof options.zlib === 'boolean' ? {} : options.zlib,
     )
 
+    const clientImports: Import[] = [
+      {
+        name: 'useMultiState',
+        from: resolve('./runtime/app/composables/multi-state'),
+      },
+    ]
     const serverImports: Import[] = [
       {
         name: 'useNitroHooks',
@@ -80,6 +87,7 @@ export default defineNuxtModule<ModuleOptions>({
     }
     // End check for enabled utils
 
+    addImports(clientImports)
     addServerImports(serverImports)
   },
 })
