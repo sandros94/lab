@@ -48,6 +48,9 @@
     "@vueuse/code": {
       "optional": true
     },
+    "crossws": {
+      "optional": true
+    },
     "h3-valibot": {
       "optional": true
     },
@@ -60,6 +63,7 @@
     "@nuxtjs/mdc": "^0.12.1",
     "@unhead/vue": "^1.11.15",
     "@vueuse/core": "^12.4.0",
+    "crossws": "^0.3.1",
     "defu": "^6.1.4",
     "h3-valibot": "^0.0.9",
     "ioredis": "^5.4.2",

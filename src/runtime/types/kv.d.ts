@@ -1,6 +1,7 @@
-import type { InputType, ZlibOptions } from 'node:zlib'
+import type { ZlibOptions } from 'node:zlib'
 import type { TransactionOptions, Storage, StorageValue } from 'unstorage'
 
+export type { InputType } from 'node:zlib'
 export type { RedisOptions } from 'unstorage/drivers/redis'
 
 export interface StorageZlib<T extends StorageValue = StorageValue> extends Storage<T> {
@@ -10,4 +11,4 @@ export interface StorageZlib<T extends StorageValue = StorageValue> extends Stor
   getGunzip<U extends T>(key: string, kvOpts?: TransactionOptions, zlibOpts?: ZlibOptions): Promise<U | null>
 }
 
-export type { InputType, TransactionOptions, Storage, StorageValue, ZlibOptions }
+export type { TransactionOptions, Storage, StorageValue, ZlibOptions }

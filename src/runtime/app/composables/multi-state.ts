@@ -1,4 +1,4 @@
-import type { Ref, MaybeRef } from '#imports'
+import type { Ref, MaybeRef } from 'vue'
 import { isRef, watch, useState } from '#imports'
 
 // Type helper for state object with specific value types per key
