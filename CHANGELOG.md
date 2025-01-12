@@ -1,6 +1,20 @@
 # Changelog
 
 
+## v0.0.10
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.9...v0.0.10)
+
+### 🩹 Fixes
+
+- Various types and error ([10c1ee2](https://github.com/sandros94/lab/commit/10c1ee2))
+- `useWS` states prefix ([60bdf3d](https://github.com/sandros94/lab/commit/60bdf3d))
+- `useWS` state initialization during `onMessage` ([a6ac3ec](https://github.com/sandros94/lab/commit/a6ac3ec))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.9
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.8...v0.0.9)
