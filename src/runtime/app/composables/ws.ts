@@ -12,6 +12,7 @@ import {
   reactive,
   toRef,
   watch,
+  useState,
   useRequestURL,
   useRuntimeConfig,
 } from '#imports'
@@ -111,8 +112,12 @@ export function useWS<
     ...opts,
     onMessage(_, message) {
       const parsed = destr<WSMessage<T>>(message.data)
-      if (!!parsed && typeof parsed === 'object' && 'channel' in parsed && 'data' in parsed)
-        states[parsed.channel].value = parsed.data
+      if (!!parsed && typeof parsed === 'object' && 'channel' in parsed && 'data' in parsed) {
+        if (states[parsed.channel] === undefined)
+          useState((prefix || stateKeyPrefix) + String(parsed.channel), () => parsed.data)
+        else
+          states[parsed.channel].value = parsed.data
+      }
 
       opts?.onMessage?.(_, message)
     },
