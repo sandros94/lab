@@ -1,4 +1,3 @@
-import type { ZlibOptions } from 'node:zlib'
 import {
   defineNuxtModule,
   addComponent,
@@ -11,8 +10,12 @@ import {
 import { defu } from 'defu'
 import type { Import } from 'unimport'
 import { ensureDependencyInstalled } from 'nypm'
-import type { RedisOptions } from 'unstorage/drivers/redis'
+
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
+import type {
+  RedisOptions,
+  ZlibOptions,
+} from './runtime/types'
 
 export interface ModuleOptions {
   kv?: boolean | RedisOptions

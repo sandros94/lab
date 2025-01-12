@@ -1,6 +1,7 @@
 import type { InputType, ZlibOptions } from 'node:zlib'
 import type { TransactionOptions, Storage, StorageValue } from 'unstorage'
 
+export type { RedisOptions } from 'unstorage/drivers/redis'
 export type MaybeDefined<T> = T extends any ? T : any
 
 export interface StorageZlib<T extends StorageValue = StorageValue> extends Storage<T> {
