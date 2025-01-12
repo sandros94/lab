@@ -11,13 +11,23 @@ import {
 import { defu } from 'defu'
 import type { Import } from 'unimport'
 import { ensureDependencyInstalled } from 'nypm'
+import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
-import type {
-  DeepPartial,
-  RedisOptions,
-  WSConfig,
-} from './runtime/types'
+
+// TODO: https://github.com/nuxt/module-builder/issues/375
+interface WSConfig {
+  route?: string
+  channels: {
+    defaults: Array<string>
+    internal: Array<string>
+  }
+}
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object
+    ? DeepPartial<T[P]>
+    : T[P]
+}
 
 export interface ModuleOptions {
   ws?: boolean | DeepPartial<WSConfig>
