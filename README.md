@@ -17,7 +17,7 @@ The goal of this project is mainly to simplify my prototyping process and learn 
 - `useKV`: integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
   - **Gzip Compression/Decompression**: taking advantage of `node:zlib` it provides a set of functions to `useKV` to automatically store and retrive compressed data (server-only).
 - `useZlib`: used under the hood by `useKV` to provide gzip support during KV store operations.
-- `useWS`: A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
+- `useWS`+`useWebSocketHandler` ([demo](https://reactive-ws.s94.dev/)): A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
 - **Built-in validation**: using [`valibot`](https://valibot.dev) and [`h3-valibot`](https://github.com/intevel/h3-valibot) under the hood (client and server).
 
 ## Quick Setup
@@ -77,7 +77,7 @@ Mainly used internally for `useKV`, it currently only provides the following fun
 - `gzip`: Compresses data using gzip.
 - `gunzip`: Decompresses gzip-compressed data.
 
-### `useWS`
+## Real-time Remote State Management
 
 A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
 
