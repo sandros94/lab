@@ -3,7 +3,7 @@ import { useScript } from '@unhead/vue'
 import { computed, ref, createError, onMounted, watch, useTemplateRef } from '#imports'
 
 const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/min/'
-const MDC_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@0.2.0/'
+const MDC_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@0.4.0/'
 
 const editorEl = useTemplateRef('editor')
 const code = defineModel<string>({ required: true })
@@ -14,12 +14,14 @@ const props = withDefaults(defineProps<{
   readOnly?: boolean
   theme?: string
   wordWrap?: 'on' | 'off'
+  tabSize?: number
 }>(), {
   language: 'mdc',
   minimap: true,
   readOnly: false,
   theme: 'vs-dark',
   wordWrap: 'on',
+  tabSize: 2,
 })
 const monaco = ref()
 const editor = ref()
@@ -54,23 +56,47 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       },
     }
 
-    const { language: monarchMdc } = await import(`${MDC_CDN_BASE}dist/index.mjs`)
+    const {
+      language: mdc,
+      formatter: mdcFormatter,
+      foldingProvider: mdcFoldingProvider,
+    } = await import(`${MDC_CDN_BASE}dist/index.mjs`)
     monaco.languages.register({ id: 'mdc' })
-    monaco.languages.setMonarchTokensProvider('mdc', monarchMdc)
+    monaco.languages.setMonarchTokensProvider('mdc', mdc)
+    monaco.languages.registerDocumentFormattingEditProvider('mdc', {
+      provideDocumentFormattingEdits: (model: any) => [{
+        range: model.getFullModelRange(),
+        text: mdcFormatter(model.getValue(), {
+          tabSize: props.tabSize,
+        }),
+      }],
+    })
+    monaco.languages.registerOnTypeFormattingEditProvider('mdc', {
+      autoFormatTriggerCharacters: ['\n'],
+      provideOnTypeFormattingEdits: (model: any) => [{
+        range: model.getFullModelRange(),
+        text: mdcFormatter(model.getValue(), {
+          tabSize: props.tabSize,
+          isFormatOnType: true,
+        }),
+      }],
+    })
+    monaco.languages.registerFoldingRangeProvider('mdc', {
+      provideFoldingRanges: (model: any) => mdcFoldingProvider(model),
+    })
     monaco.languages.setLanguageConfiguration('mdc', {
       surroundingPairs: [
         { open: '{', close: '}' },
         { open: '[', close: ']' },
         { open: '(', close: ')' },
-        { open: '<', close: '>' },
         { open: '\'', close: '\'' },
         { open: '"', close: '"' },
+        { open: '`', close: '`' },
       ],
       autoClosingPairs: [
         { open: '{', close: '}' },
         { open: '[', close: ']' },
         { open: '(', close: ')' },
-        { open: '\'', close: '\'' },
         { open: '"', close: '"' },
       ],
     })
@@ -82,14 +108,16 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
     const editor = monaco.editor.create(editorEl.value, {
       value: code.value,
       language: props.language,
-      tabSize: 2,
+      tabSize: props.tabSize,
       wordWrap: props.wordWrap,
       wrappingStrategy: 'advanced',
       insertSpaces: true,
       theme: props.theme,
       autoIndent: 'full',
-      formatOnPaste: true,
+      folding: true,
+      detectIndentation: false,
       formatOnType: true,
+      formatOnPaste: true,
       automaticLayout: true,
       readOnly: props.readOnly,
       minimap: {
