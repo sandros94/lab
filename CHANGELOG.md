@@ -1,6 +1,26 @@
 # Changelog
 
 
+## v0.0.11
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.10...v0.0.11)
+
+### 🚀 Enhancements
+
+- **`MonacoEditor`:** `formatter` and `foldingProvider` ([ade7bf1](https://github.com/sandros94/lab/commit/ade7bf1))
+
+### 🩹 Fixes
+
+- **`MonacoEditor`:** Loading too soon or twice ([0c52f37](https://github.com/sandros94/lab/commit/0c52f37))
+
+### 📖 Documentation
+
+- Update readme ([6e4b3fc](https://github.com/sandros94/lab/commit/6e4b3fc))
+
+### ❤️ Contributors
+
+- Sandros94 ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.10
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.9...v0.0.10)
