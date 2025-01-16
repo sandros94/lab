@@ -5,6 +5,13 @@ import { computed, ref, createError, onMounted, watch, useTemplateRef } from '#i
 const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/min/'
 const MDC_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@0.4.0/'
 
+declare global {
+  interface Window {
+    require: any
+    MonacoEnvironment: any
+  }
+}
+
 const editorEl = useTemplateRef('editor')
 const code = defineModel<string>({ required: true })
 const props = withDefaults(defineProps<{
@@ -34,17 +41,48 @@ const styling = computed(() => {
   }
 })
 
+// Cave's man approach to wait for window.require to be available
+const waitForRequire = async (attempt = 1): Promise<void> => {
+  if (window.require) return
+  if (attempt > 5) throw new Error('Monaco loader.js failed to initialize')
+
+  const delays = [0, 100, 250, 500, 2000]
+  await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]))
+  return waitForRequire(attempt + 1)
+}
+
 const { status, load } = useScript({
   src: `${MONACO_CDN_BASE}vs/loader.js`,
 }, {
   trigger: 'manual',
   async use() {
-    // @ts-expect-error: in-browser event
-    window.require.config({ paths: { vs: `${MONACO_CDN_BASE}vs` } })
-    // @ts-expect-error: in-browser event
-    const monaco = await new Promise<any>(resolve => window.require(['vs/editor/editor.main'], resolve))
+    if (editorEl.value) return
 
-    // @ts-expect-error: in-browser event
+    try {
+      await waitForRequire()
+    }
+    catch {
+      throw new Error('Failed to load Monaco: loader.js did not initialize')
+    }
+
+    window.require.config({
+      paths: {
+        vs: `${MONACO_CDN_BASE}vs`,
+      },
+      // 'vs/nls': {
+      //   availableLanguages: {},
+      // },
+    })
+
+    const _monaco = await new Promise<any>((resolve, reject) => {
+      try {
+        window.require(['vs/editor/editor.main'], resolve)
+      }
+      catch (e) {
+        reject(new Error('Failed to load Monaco editor: ' + e))
+      }
+    })
+
     window.MonacoEnvironment = {
       getWorkerUrl: function () {
         return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
@@ -60,10 +98,10 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       language: mdc,
       formatter: mdcFormatter,
       foldingProvider: mdcFoldingProvider,
-    } = await import(`${MDC_CDN_BASE}dist/index.mjs`)
-    monaco.languages.register({ id: 'mdc' })
-    monaco.languages.setMonarchTokensProvider('mdc', mdc)
-    monaco.languages.registerDocumentFormattingEditProvider('mdc', {
+    } = await import(/* @vite-ignore */`${MDC_CDN_BASE}dist/index.mjs`)
+    _monaco.languages.register({ id: 'mdc' })
+    _monaco.languages.setMonarchTokensProvider('mdc', mdc)
+    _monaco.languages.registerDocumentFormattingEditProvider('mdc', {
       provideDocumentFormattingEdits: (model: any) => [{
         range: model.getFullModelRange(),
         text: mdcFormatter(model.getValue(), {
@@ -71,7 +109,7 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
         }),
       }],
     })
-    monaco.languages.registerOnTypeFormattingEditProvider('mdc', {
+    _monaco.languages.registerOnTypeFormattingEditProvider('mdc', {
       autoFormatTriggerCharacters: ['\n'],
       provideOnTypeFormattingEdits: (model: any) => [{
         range: model.getFullModelRange(),
@@ -81,10 +119,10 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
         }),
       }],
     })
-    monaco.languages.registerFoldingRangeProvider('mdc', {
+    _monaco.languages.registerFoldingRangeProvider('mdc', {
       provideFoldingRanges: (model: any) => mdcFoldingProvider(model),
     })
-    monaco.languages.setLanguageConfiguration('mdc', {
+    _monaco.languages.setLanguageConfiguration('mdc', {
       surroundingPairs: [
         { open: '{', close: '}' },
         { open: '[', close: ']' },
@@ -105,7 +143,8 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       createError('MonacoEditor must be called in the browser')
       return
     }
-    const editor = monaco.editor.create(editorEl.value, {
+
+    const _editor = _monaco.editor.create(editorEl.value, {
       value: code.value,
       language: props.language,
       tabSize: props.tabSize,
@@ -136,36 +175,40 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       },
     })
 
-    editor.onDidChangeModelContent(() => {
-      code.value = editor.getValue()
+    _editor.onDidChangeModelContent(() => {
+      code.value = _editor.getValue()
     })
 
     const updateHeight = () => {
       if (!props.fitContent) return
-      const contentHeight = editor.getContentHeight()
+      const contentHeight = _editor.getContentHeight()
       editorEl.value!.style.height = `${contentHeight}px`
-      editor.layout({
+      _editor.layout({
         width: editorEl.value!.offsetWidth,
         height: Math.min(contentHeight, editorEl.value!.offsetHeight),
       })
     }
 
-    editor.onDidContentSizeChange(updateHeight)
+    _editor.onDidContentSizeChange(updateHeight)
 
     return {
-      editor,
-      monaco,
+      editor: _editor,
+      monaco: _monaco,
     }
   },
 })
 
 onMounted(async () => {
-  const {
-    editor: ed,
-    monaco: mo,
-  } = await load() || {}
-  monaco.value = mo
-  editor.value = ed
+  try {
+    const l = await load()
+    if (!l) return
+
+    monaco.value = l.monaco
+    editor.value = l.editor
+  }
+  catch (error) {
+    console.error('Failed to initialize Monaco:', error)
+  }
 })
 
 // watch(code, (newCode) => {
