@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.0.12
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.11...v0.0.12)
+
+### 🩹 Fixes
+
+- **`useWS`:** Allow `send` to send messages not specifically related to channels ([f9db2f8](https://github.com/sandros94/lab/commit/f9db2f8))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.11
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.10...v0.0.11)
