@@ -1,3 +1,5 @@
+import { destr } from 'destr'
+
 export default useWebSocketHandler({
   async open(peer, { channels }) {
     // Subscribe users to requested channels and init data from KV
@@ -28,13 +30,14 @@ export default useWebSocketHandler({
   },
 
   async message(peer, message) {
+    logger.log('Received message:', message.text())
     // Validate the incoming message
     const parsedMessage = v.safeParse(
       v.object({
         channel: v.string(),
         data: v.any(),
       }),
-      message.json(),
+      destr(message.text()),
     )
     if (!parsedMessage.success) return
     const kv = useKV('ws')

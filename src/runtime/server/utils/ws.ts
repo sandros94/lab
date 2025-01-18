@@ -1,5 +1,6 @@
 import { createHooks } from 'hookable'
 import { getQuery } from 'ufo'
+import { destr } from 'destr'
 
 import { defineWebSocketHandler, useRuntimeConfig } from '#imports'
 import type {
@@ -72,7 +73,7 @@ export function useWebSocketHandler(hooks: Partial<WSHandlerHooks>) {
 
     message(peer, message) {
       const config = getConfig()
-      const m = message.json<any>()
+      const m = destr<any>(message.text())
       if (m?.channel && config.channels.internal.includes(m.channel)) return
       const channels = getWSChannels(peer.websocket.url)
 

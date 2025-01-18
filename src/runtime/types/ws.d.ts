@@ -27,6 +27,7 @@ export interface WSOptions extends UseWebSocketOptions {
 
 export interface UseWSReturn<T extends Record<string | AllChannels, any>> extends Omit<UseWebSocketReturn, 'send'> {
   states: MultiState<T>
+  send<M extends (object | string)>(data: M): boolean
   send<M extends WSMessage<T>>(channel: M['channel'], data: M['data']): boolean
   _send: UseWebSocketReturn['send']
 }

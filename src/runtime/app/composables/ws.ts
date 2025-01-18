@@ -124,8 +124,44 @@ export function useWS<
     autoConnect: false,
   })
 
-  function send<M extends WSMessage<T>>(channel: M['channel'], data: M['data']) {
-    return _send(JSON.stringify({ channel, data }))
+  /**
+   * Sends raw message data through the WebSocket connection.
+   * Messages are buffered if connection is not yet established.
+   *
+   * @template M - Type extending string | ArrayBuffer | Blob | object
+   * @param {M} data - Raw message to send
+   * @returns {boolean} Success status of the send operation
+   *
+   * @example
+   * send("Hello World")
+   * send(new Blob(['Hello']))
+   * send({ type: "message", content: "Hello" })
+   */
+  function send<M extends string | ArrayBuffer | Blob | object>(data: M): boolean
+  /**
+   * Sends data to a specific WebSocket channel.
+   * Messages are buffered if connection is not yet established.
+   *
+   * @template M - Type extending WSMessage<T>
+   * @param {M['channel']} channel - Target channel name
+   * @param {M['data']} data - Data to send to the channel
+   * @returns {boolean} Success status of the send operation
+   *
+   * @example
+   * send("notifications", { id: 1, text: "New message" })
+   * send("chat", { message: "Hello", user: "John" })
+   */
+  function send<M extends WSMessage<T>>(channel: M['channel'], data: M['data']): boolean
+  function send<M extends WSMessage<T>>(...args: any): boolean {
+    if (args.length === 1) {
+      const data = args[0]
+      if (typeof data === 'object' && !(data instanceof Blob) && !(data instanceof ArrayBuffer))
+        return _send(JSON.stringify(data), true)
+      return _send(data)
+    }
+
+    const [channel, data] = args as [M['channel'] | undefined, M['data']]
+    return _send(JSON.stringify({ channel, data }), true)
   }
 
   if (opts?.autoConnect !== false)
