@@ -1,6 +1,6 @@
 import { destr } from 'destr'
 
-export default useWebSocketHandler({
+export default defineReactiveWSHandler({
   async open(peer, { channels }) {
     // Subscribe users to requested channels and init data from KV
     channels.forEach(async (channel) => {

@@ -137,6 +137,11 @@ export default defineNuxtModule<ModuleOptions>({
         from: resolve('./runtime/server/utils/ws'),
       })
       serverImports.push({
+        name: 'defineReactiveWSHandler',
+        from: resolve('./runtime/server/utils/ws'),
+      })
+      // TODO: remove on next major
+      serverImports.push({
         name: 'useWebSocketHandler',
         from: resolve('./runtime/server/utils/ws'),
       })

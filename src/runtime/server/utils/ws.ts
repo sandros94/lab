@@ -16,7 +16,7 @@ import type {
  *
  * @see — https://h3.unjs.io/guide/websocket
  */
-export function useWebSocketHandler(hooks: Partial<WSHandlerHooks>) {
+export function defineReactiveWSHandler(hooks: Partial<WSHandlerHooks>) {
   let config: WSConfig
 
   const getConfig = () => {
@@ -90,6 +90,15 @@ export function useWebSocketHandler(hooks: Partial<WSHandlerHooks>) {
 
     error: (peer, error) => hooks.error?.(peer, error),
   })
+}
+
+/**
+ * Deprecated, use `defineReactiveWSHandler` instead
+ *
+ * @deprecated Use `defineReactiveWSHandler` instead
+ */
+export function useWebSocketHandler(hooks: Partial<WSHandlerHooks>) {
+  return defineReactiveWSHandler(hooks)
 }
 
 /**
