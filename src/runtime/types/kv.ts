@@ -1,6 +1,8 @@
 import type { ZlibOptions } from 'node:zlib'
 import type { TransactionOptions, Storage, StorageValue } from 'unstorage'
 
+import type { MaybeDefined } from '.'
+
 export type { InputType } from 'node:zlib'
 export type { RedisOptions } from 'unstorage/drivers/redis'
 

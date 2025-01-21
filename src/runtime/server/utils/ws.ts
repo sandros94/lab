@@ -5,7 +5,7 @@ import { destr } from 'destr'
 import { defineWebSocketHandler, useRuntimeConfig } from '#imports'
 import type {
   Peer,
-  WSConfig,
+  WSRuntimeConfig,
   WSHandlerHooks,
   WSHooks,
 } from '#lab/types'
@@ -17,11 +17,11 @@ import type {
  * @see — https://h3.unjs.io/guide/websocket
  */
 export function defineReactiveWSHandler(hooks: Partial<WSHandlerHooks>) {
-  let config: WSConfig
+  let config: WSRuntimeConfig
 
   const getConfig = () => {
     if (config) return config
-    return config = useRuntimeConfig().public.lab.ws as WSConfig
+    return config = useRuntimeConfig().public.lab.ws as WSRuntimeConfig
   }
 
   // TODO: get runtimeConfig channels and merge them with defaultChannels

@@ -14,15 +14,7 @@ import { ensureDependencyInstalled } from 'nypm'
 import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
-
-// TODO: https://github.com/nuxt/module-builder/issues/375
-interface WSConfig {
-  route?: string
-  channels?: {
-    defaults?: Array<string>
-    internal?: Array<string>
-  }
-}
+import type { WSConfig } from './runtime/types'
 
 export interface ModuleOptions {
   ws?: boolean | WSConfig

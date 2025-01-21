@@ -21,7 +21,7 @@ import { merge } from '#lab/utils'
 import type {
   AllChannels,
   MultiState,
-  WSConfig,
+  WSRuntimeConfig,
   WSMessage,
   WSOptions,
   UseWSReturn,
@@ -42,7 +42,7 @@ const stateKeyPrefix = ':ws:'
 export function useWSState<
   T extends Record<string | AllChannels, any>,
 >(channels?: MaybeRef<Array<keyof T | string>>, options?: { prefix?: string }): MultiState<T> {
-  const { defaults, internal } = useRuntimeConfig().public.lab.ws?.channels as WSConfig['channels']
+  const { defaults, internal } = useRuntimeConfig().public.lab.ws?.channels as WSRuntimeConfig['channels']
   const _channels = toRef(channels || [])
 
   const mergedChannels: ComputedRef<string[]> = computed<(string | AllChannels)[]>(
@@ -75,7 +75,7 @@ export function useWS<
   channels?: MaybeRef<Array<keyof T | string>>,
   options?: WSOptions,
 ): UseWSReturn<T> {
-  const { route } = useRuntimeConfig().public.lab.ws as WSConfig
+  const { route } = useRuntimeConfig().public.lab.ws as WSRuntimeConfig
   const { query, route: optsRoute, prefix, ...opts } = options || {}
   const path = optsRoute || route
 

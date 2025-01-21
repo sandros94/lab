@@ -1,21 +1,33 @@
-import type { PublicRuntimeConfig } from '@nuxt/schema'
+import type { PublicRuntimeConfig } from 'nuxt/schema'
 import type { UseWebSocketOptions, UseWebSocketReturn } from '@vueuse/core'
 import type { Peer, Hooks, Message } from 'crossws'
-import type { Fallback, MultiState } from '.'
+import type { MultiState } from '.'
 
 type MaybePromise<T> = T | Promise<T>
 
+// Ensure config exists and extract lab.ws
+type ExtractWSConfig<T> = T extends { lab: { ws: infer U } } ? U : never
+
+// Make all nested properties required and non-nullable
+type DeepRequired<T> = {
+  [K in keyof T]-?: T[K] extends object
+    ? DeepRequired<T[K]>
+    : NonNullable<T[K]>
+}
+
 export type { Peer, Hooks, Message }
 
-export type InternalChannels = PublicRuntimeConfig['ws']['channels']['internal'][number]
-export type DefaultChannels = PublicRuntimeConfig['ws']['channels']['defaults'][number]
+// Combine the utility types to get the final WSRuntimeConfig
+export type WSRuntimeConfig = DeepRequired<ExtractWSConfig<PublicRuntimeConfig>>
+export type InternalChannels = WSRuntimeConfig['channels']['internal'][number]
+export type DefaultChannels = WSRuntimeConfig['channels']['defaults'][number]
 export type AllChannels = DefaultChannels | InternalChannels
 
 export interface WSConfig {
   route?: string
-  channels: {
-    defaults: Fallback<Array<DefaultChannels>, Array<string>>
-    internal: Fallback<Array<InternalChannels>, Array<string>>
+  channels?: {
+    defaults?: Array<string>
+    internal?: Array<string>
   }
 }
 
@@ -25,11 +37,11 @@ export interface WSOptions extends UseWebSocketOptions {
   query?: Record<string, any>
 }
 
-export interface UseWSReturn<T extends Record<string | AllChannels, any>> extends Omit<UseWebSocketReturn, 'send'> {
+export interface UseWSReturn<T extends Record<string | AllChannels, any>, D> extends Omit<UseWebSocketReturn<D>, 'send'> {
   states: MultiState<T>
   send<M extends (object | string)>(data: M): boolean
   send<M extends WSMessage<T>>(channel: M['channel'], data: M['data']): boolean
-  _send: UseWebSocketReturn['send']
+  _send: UseWebSocketReturn<D>['send']
 }
 
 export interface WSMessage<T extends Record<string | AllChannels, any> = Record<string | AllChannels, any>> {
@@ -38,17 +50,19 @@ export interface WSMessage<T extends Record<string | AllChannels, any> = Record<
 }
 
 export interface WSHandlerHooks extends Partial<Omit<Hooks, 'open' | 'close' | 'message'>> {
+  // TODO: add other hooks
+
   /** A socket is opened */
-  open: (peer: Peer, config: { channels: string[], config: WSConfig }) => MaybePromise<void>
+  open: (peer: Peer, config: { channels: string[], config: WSRuntimeConfig }) => MaybePromise<void>
 
   /** A message is received */
-  message: (peer: Peer, message: Message, config: { channels: string[], config: WSConfig }) => MaybePromise<void>
+  message: (peer: Peer, message: Message, config: { channels: string[], config: WSRuntimeConfig }) => MaybePromise<void>
 
   /** A socket is closed */
   close: (peer: Peer, details: {
     code?: number
     reason?: string
-  }, config: { channels: string[], config: WSConfig }) => MaybePromise<void>
+  }, config: { channels: string[], config: WSRuntimeConfig }) => MaybePromise<void>
 }
 
 export type ChannelHooks = {
