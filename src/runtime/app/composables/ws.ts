@@ -6,10 +6,11 @@ import {
   withQuery,
 } from 'ufo'
 
-import type { ComputedRef, MaybeRef } from '#imports'
+import type { Ref, MaybeRef } from '#imports'
 import {
   computed,
   reactive,
+  ref,
   toRef,
   watch,
   useState,
@@ -45,8 +46,8 @@ export function useWSState<
   const { defaults, internal } = useRuntimeConfig().public.lab.ws?.channels as WSRuntimeConfig['channels']
   const _channels = toRef(channels || [])
 
-  const mergedChannels: ComputedRef<string[]> = computed<(string | AllChannels)[]>(
-    () => merge(internal, [...defaults, ..._channels.value]),
+  const mergedChannels = computed(
+    () => merge(internal, [...defaults, ..._channels.value]) as (string | AllChannels)[],
   )
   return useMultiState<T>(mergedChannels, { prefix: options?.prefix || stateKeyPrefix })
 }
@@ -71,10 +72,11 @@ export function useWSState<
  */
 export function useWS<
   T extends Record<string | AllChannels, any>,
+  D = any,
 >(
   channels?: MaybeRef<Array<keyof T | string>>,
   options?: WSOptions,
-): UseWSReturn<T> {
+): UseWSReturn<T, D> {
   const { route } = useRuntimeConfig().public.lab.ws as WSRuntimeConfig
   const { query, route: optsRoute, prefix, ...opts } = options || {}
   const path = optsRoute || route
@@ -83,7 +85,9 @@ export function useWS<
     throw new Error('[useWS] `route` is required in options or `nuxt.config.ts`')
   }
 
-  const _channels = channels === undefined ? undefined : toRef(channels)
+  const _channels = channels === undefined
+    ? ref<string[]>([])
+    : toRef(channels) as Ref<Array<keyof T>>
   const states = useWSState<T>(_channels, { prefix })
 
   const _query = reactive({

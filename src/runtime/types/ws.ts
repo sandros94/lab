@@ -5,20 +5,18 @@ import type { MultiState } from '.'
 
 type MaybePromise<T> = T | Promise<T>
 
-// Ensure config exists and extract lab.ws
-type ExtractWSConfig<T> = T extends { lab: { ws: infer U } } ? U : never
-
 // Make all nested properties required and non-nullable
 type DeepRequired<T> = {
-  [K in keyof T]-?: T[K] extends object
-    ? DeepRequired<T[K]>
-    : NonNullable<T[K]>
+  [K in keyof T]-?: T[K] extends undefined
+    ? Required<T[K]>
+    : DeepRequired<T[K]>
 }
 
 export type { Peer, Hooks, Message }
 
 // Combine the utility types to get the final WSRuntimeConfig
-export type WSRuntimeConfig = DeepRequired<ExtractWSConfig<PublicRuntimeConfig>>
+export type LabRuntimeConfig = DeepRequired<PublicRuntimeConfig['lab']>
+export type WSRuntimeConfig = LabRuntimeConfig['ws']
 export type InternalChannels = WSRuntimeConfig['channels']['internal'][number]
 export type DefaultChannels = WSRuntimeConfig['channels']['defaults'][number]
 export type AllChannels = DefaultChannels | InternalChannels
