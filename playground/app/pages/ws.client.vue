@@ -71,8 +71,8 @@
 </template>
 
 <script setup lang="ts">
-const items = ['notifications', 'chat']
-const channels = ref<string[]>(['notifications'])
+const items = ['notifications', 'chat'] as const
+const channels = ref<Array<typeof items[number]>>(['notifications'])
 
 const { states, data, status, send, open } = useWS<{
   notifications: {
