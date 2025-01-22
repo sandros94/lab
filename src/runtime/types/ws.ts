@@ -5,21 +5,7 @@ import type { MultiState } from '.'
 
 type MaybePromise<T> = T | Promise<T>
 
-// Make all nested properties required and non-nullable
-type DeepRequired<T> = {
-  [K in keyof T]-?: T[K] extends undefined
-    ? Required<T[K]>
-    : DeepRequired<T[K]>
-}
-
 export type { Peer, Hooks, Message }
-
-// Combine the utility types to get the final WSRuntimeConfig
-export type LabRuntimeConfig = DeepRequired<PublicRuntimeConfig['lab']>
-export type WSRuntimeConfig = LabRuntimeConfig['ws']
-export type InternalChannels = WSRuntimeConfig['channels']['internal'][number]
-export type DefaultChannels = WSRuntimeConfig['channels']['defaults'][number]
-export type AllChannels = DefaultChannels | InternalChannels
 
 export interface WSConfig {
   route?: string
@@ -70,4 +56,18 @@ export type ChannelHooks = {
 export interface WSHooks extends ChannelHooks {
   all(...message: { channel: AllChannels, data: unknown }[]): MaybePromise<void>
   internal(...message: { channel: InternalChannels, data: unknown }[]): MaybePromise<void>
+}
+
+// TODO: clean this mess
+export type LabRuntimeConfig = Required<PublicRuntimeConfig['lab']>
+type _WSRuntimeConfig = Required<LabRuntimeConfig['ws']>
+export type InternalChannels = Required<_WSRuntimeConfig['channels']>['internal'][number]
+export type DefaultChannels = Required<_WSRuntimeConfig['channels']>['defaults'][number]
+export type AllChannels = DefaultChannels | InternalChannels
+export interface WSRuntimeConfig {
+  route: LabRuntimeConfig['ws']['route']
+  channels: {
+    defaults: DefaultChannels[]
+    internal: InternalChannels[]
+  }
 }
