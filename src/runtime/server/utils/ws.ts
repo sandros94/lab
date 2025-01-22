@@ -92,6 +92,7 @@ export function defineReactiveWSHandler(hooks: Partial<WSHandlerHooks>) {
   })
 }
 
+// TODO: remove on next major release
 /**
  * Deprecated, use `defineReactiveWSHandler` instead
  *
