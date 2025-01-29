@@ -14,14 +14,14 @@ import {
   deserializeRaw,
 } from '#lab/utils/unstorage'
 
-export function useKV<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
+export function useMem<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
   const { cache } = useRuntimeConfig().lab
-  const _base = cache === 'kv' ? 'CACHE' : 'KV'
+  const _base = cache === 'mem' ? 'CACHE' : 'MEMORY'
   return useStorage(base ? `${_base}:${base}` : _base)
 }
 
-export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
-  const kv = useKV<T>(base)
+export function useMemZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
+  const mem = useMem<T>(base)
   const { gzip, gunzip } = useZlib(options)
 
   /**
@@ -29,33 +29,19 @@ export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, 
    *
    * @param {string} key - The key to store the compressed data under.
    * @param {any} input - The data to be compressed.
-   * @param {TransactionOptions} [kvOpts] - Optional configuration options for the storage operation.
+   * @param {TransactionOptions} [memOpts] - Optional configuration options for the storage operation.
    * @param {ZlibOptions} [zlibOpts] - Optional configuration options for the compression process.
    * @returns A promise that resolves when the operation is complete.
    */
   async function setGzip(
     key: string,
-    input: undefined,
-    kvOpts?: (TransactionOptions & {
-      removeMeta?: boolean
-    }) | boolean,
-    zlibOpts?: ZlibOptions,
-  ): Promise<void>
-  async function setGzip(
-    key: string,
     input: any,
-    kvOpts?: TransactionOptions,
+    memOpts?: TransactionOptions,
     zlibOpts?: ZlibOptions,
-  ): Promise<void>
-  async function setGzip(
-    key: string,
-    input: any,
-    kvOpts?: any,
-    zlibOpts?: any,
   ): Promise<void> {
-    if (input === 'undefined') return kv.removeItem(key)
+    if (input === 'undefined') return mem.removeItem(key)
     const data = await gzip(input, zlibOpts)
-    return kv.setItemRaw<string>(key, serializeRaw(data), kvOpts)
+    return mem.setItemRaw<string>(key, serializeRaw(data), memOpts)
   }
 
   /**
@@ -70,7 +56,7 @@ export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, 
     key: string,
     opts?: TransactionOptions,
   ): Promise<Buffer | string | null> {
-    const data = await kv.getItemRaw(key, opts)
+    const data = await mem.getItemRaw(key, opts)
     if (data === null) return data
     return deserializeRaw(data)
   }
@@ -79,16 +65,16 @@ export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, 
    * Retrieves compressed data from the KV store, decompresses it, and returns the original data.
    *
    * @param {string} key - The key to retrieve the compressed data from.
-   * @param {TransactionOptions} [kvOpts] - Optional configuration options for the storage operation.
+   * @param {TransactionOptions} [memOpts] - Optional configuration options for the storage operation.
    * @param {ZlibOptions} [zlibOpts] - Optional configuration options for the decompression process.
    * @returns A promise that resolves to the decompressed data, or null if no data is found.
    */
   async function getGunzip<T = unknown>(
     key: string,
-    kvOpts?: TransactionOptions,
+    memOpts?: TransactionOptions,
     zlibOpts?: ZlibOptions,
   ): Promise<T | null> {
-    const data = await getGzip(key, kvOpts)
+    const data = await getGzip(key, memOpts)
     if (data === null) return data
     else if (typeof data === 'string') return destr<T>(data)
     const test = await gunzip<T>(data, zlibOpts)
@@ -96,7 +82,7 @@ export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, 
   }
 
   return {
-    ...kv,
+    ...mem,
     setGzip,
     getGzip,
     getGunzip,

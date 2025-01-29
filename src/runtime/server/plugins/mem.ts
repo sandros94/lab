@@ -1,23 +1,23 @@
-import redisDriver from 'unstorage/drivers/redis'
+import memDriver from '#lab/utils/storage'
 
 import { defineNitroPlugin, useNitroHooks, useRuntimeConfig, useStorage } from '#imports'
 
 export default defineNitroPlugin(() => {
   const storage = useStorage()
   const labConfig = useRuntimeConfig().lab
-  const options = labConfig.kv || {}
-  useNitroHooks().callHookSync('lab:kv:config', options)
+  const options = labConfig.mem || {}
+  useNitroHooks().callHookSync('lab:mem:config', options)
 
-  const driver = redisDriver(options)
+  const driver = memDriver(options)
 
-  if (labConfig.cache === 'kv') {
+  if (labConfig.cache === 'mem') {
     // Mount driver as cache
     storage.unmount('CACHE')
     storage.mount('CACHE', driver)
   }
   else {
-    // Mount driver as KV
-    storage.unmount('KV')
-    storage.mount('KV', driver)
+    // Mount driver as MEMORY
+    storage.unmount('MEMORY')
+    storage.mount('MEMORY', driver)
   }
 })

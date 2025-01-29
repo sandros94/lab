@@ -1,4 +1,5 @@
 export type { MultiState } from '../app/composables/multi-state'
+export type * from './mem'
 export type * from './kv'
 export type * from './ws'
 

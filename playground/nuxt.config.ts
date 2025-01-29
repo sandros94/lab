@@ -6,13 +6,19 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-12-15',
 
   lab: {
-    monacoEditor: true,
+    monacoEditor: true, // default `false`
 
-    kv: {
+    cache: 'mem', // default `null`
+
+    mem: {
       ttl: 10 * 60, // 10 minutes
     },
 
-    zlib: true,
+    kv: {
+      ttl: 10 * 60, // 10 minutes
+    }, // default `false`
+
+    zlib: true, // default `false`
 
     ws: {
       route: '/_ws',
@@ -20,6 +26,8 @@ export default defineNuxtConfig({
         internal: ['_internal'],
         defaults: ['session'],
       },
-    },
+    }, // default `false`
+
+    valibot: true,
   },
 })

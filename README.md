@@ -14,8 +14,10 @@ The goal of this project is mainly to simplify my prototyping process and learn 
 
 ## Features
 
+- `useMem`: integrates an in-memory kv store, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
+  - **Gzip Compression/Decompression**: taking advantage of `node:zlib` it provides a set of functions to `useMem` to automatically store and retrive compressed data (server-only).
 - `useKV`: integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
-  - **Gzip Compression/Decompression**: taking advantage of `node:zlib` it provides a set of functions to `useKV` to automatically store and retrive compressed data (server-only).
+  - **Gzip Compression/Decompression**: same as `useMem`, but applied to `useKV`.
 - `useZlib`: used under the hood by `useKV` to provide gzip support during KV store operations.
 - `useWS`+`useWebSocketHandler` ([demo](https://reactive-ws.s94.dev/)): A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
 - **Built-in validation**: using [`valibot`](https://valibot.dev) and [`h3-valibot`](https://github.com/intevel/h3-valibot) under the hood (client and server).
@@ -35,6 +37,7 @@ export default defineNuxtConfig({
   modules: ['@sandros94/lab'],
 
   lab: {
+    cache: 'kv', // default 'mem'
     kv: true,     // default false
     zlib: true,   // default false
     valibot: true // default true
@@ -42,13 +45,16 @@ export default defineNuxtConfig({
 })
 ```
 
-`lab.kv` and `lab.zlib` also accept an object to edit their defaults.
+`lab.mem`, `lab.kv` and `lab.zlib` also accept an object to edit their defaults options.
 
 ```ts
 export default defineNuxtConfig({
   modules: ['@sandros94/lab'],
 
   lab: {
+    mem: {
+      ttl: 10 * 60,
+    }
     kv: {
       ttl: 10 * 60,
     }
@@ -62,22 +68,41 @@ You can also edit them via env vars: `NUXT_LAB_KV_*` and `NUXT_LAB_ZLIB_*`. Usef
 
 The `@sandros94/lab` module includes some utility functions:
 
-### `useKV`
+### `useMem`
 
-Based on `useStorage` when combined with `zlib` it also receives the following functions:
+Based on [`unstorage`](https://github.com/unjs/unstorage) is a custom in-memory driver. It provides added functionality like time-based metadata, optional size calculation and TTL support with auto-purge.
+
+```ts
+const mem = useMem()
+
+mem.setItem('key', 'value', { ttl: 60 }) // Expires in 60 seconds
+
+const meta = mem.getMeta('key') // { ttl, atime, mtime, ctime, birthtime, size, timeoutId }
+```
+
+When combined with `zlib` it also receives the following functions:
 
 - `setGzip`: Compresses data using gzip and stores it in the KV store.
 - `getGzip`: Retrieves compressed data from the KV store without decompressing it.
 - `getGunzip`: Retrieves compressed data from the KV store, decompresses it, and returns the original data.
 
-### `useZlib`
+### `useKV` (optional)
+
+Based on `useStorage` and `usestorage`'s `redis` driver, to provide runtime-editable support with any Redis compatible KV stores.
+It can also be combiled with `zlib` to provide gzip support as described above.
+
+### `useZlib` (optional)
 
 Mainly used internally for `useKV`, it currently only provides the following functions:
 
 - `gzip`: Compresses data using gzip.
 - `gunzip`: Decompresses gzip-compressed data.
 
-## Real-time Remote State Management
+## `cache` (optional)
+
+There is built-in support to use `useMem` or `useKV` as a cache provider. You can switch between them by setting `lab.cache` to either `'mem'` or `'kv'` or disable it via `null` (default). This automatically configures Nuxt and Nitro for caching server-side requests and functions.
+
+## Real-time Remote State Management (optional)
 
 A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
 
@@ -85,7 +110,7 @@ A WebSocket implementation with built-in shared state management, channel subscr
 - 📦 Built-in shared state management per channel
 - 🔐 Type-safe messages and channels
 - 📢 Hooking system to trigger global or per-channel messages
-- 💾 Easily add persistent storage with `useKV`
+- 💾 Easily add persistent storage with `useMem` or `useKV`
 
 ```ts
 // nuxt.config.ts

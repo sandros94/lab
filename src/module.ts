@@ -14,10 +14,12 @@ import { ensureDependencyInstalled } from 'nypm'
 import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
-import type { WSConfig } from './runtime/types'
+import type { WSConfig, MemoryOptions } from './runtime/types'
 
 export interface ModuleOptions {
   ws?: boolean | WSConfig
+  cache?: 'mem' | 'kv' | null
+  mem?: MemoryOptions
   kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
   valibot?: boolean
@@ -31,6 +33,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {
     ws: false,
+    cache: null,
     kv: false,
     zlib: false,
     valibot: true,
@@ -43,6 +46,11 @@ export default defineNuxtModule<ModuleOptions>({
 
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
     const labPublicConfig = nuxt.options.runtimeConfig.public.lab ||= {}
+    labConfig.cache ||= options.cache
+    labConfig.mem = defu(
+      labConfig.mem,
+      options.mem,
+    )
     labConfig.kv = defu(
       labConfig.kv,
       typeof options.kv === 'boolean' ? {} : options.kv,
@@ -74,7 +82,19 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'useNitroHooks',
         from: resolve('./runtime/server/utils/hooks'),
       },
+      options.zlib !== false
+        ? {
+            as: 'useMem',
+            name: 'useMemZlib',
+            from: resolve('./runtime/server/utils/mem'),
+          }
+        : {
+            as: 'useMem',
+            name: 'useMem',
+            from: resolve('./runtime/server/utils/mem'),
+          },
     ]
+    addServerPlugin(resolve('./runtime/server/plugins/mem'))
 
     // Start check for enabled utils
     if (options.zlib !== false)
@@ -148,6 +168,8 @@ export default defineNuxtModule<ModuleOptions>({
 declare module '@nuxt/schema' {
   interface RuntimeConfig {
     lab: {
+      cache?: 'mem' | 'kv' | null
+      mem?: MemoryOptions
       kv?: RedisOptions
       zlib?: ZlibOptions
     }
@@ -161,6 +183,7 @@ declare module '@nuxt/schema' {
 
 declare module 'nitropack' {
   interface NitroRuntimeHooks {
+    'lab:mem:config': (options: RedisOptions) => void
     'lab:kv:config': (options: RedisOptions) => void
     'lab:zlib:config': (options: ZlibOptions) => void
   }
