@@ -1,1 +1,1 @@
-export type { MemoryDriver, MemoryOptions } from '../utils/storage'
+export type { MemoryDriver, MemoryDriverMeta, MemoryOptions } from '../utils/storage'

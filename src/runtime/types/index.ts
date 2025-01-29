@@ -5,6 +5,7 @@ export type * from './ws'
 
 export type MaybeDefined<T> = T extends any ? T : any
 export type Fallback<T, D> = T extends any ? D : T
+export type MaybePromise<T> = T | Promise<T>
 
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object

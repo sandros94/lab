@@ -1,6 +1,10 @@
 import { fileURLToPath } from 'node:url'
-import { describe, it, expect, assert } from 'vitest'
+
+import { createStorage } from 'unstorage'
+import { describe, it, expect, assert, afterAll } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils/e2e'
+
+import memoryDriver from '../src/runtime/utils/storage'
 
 describe('utils', async () => {
   await setup({
@@ -45,6 +49,43 @@ describe('utils', async () => {
 
       assert.includeMembers(names, data)
       expect(data).toHaveLength(2)
+    })
+  })
+
+  describe('storage', () => {
+    const storage = createStorage({
+      driver: memoryDriver({ ttlAutoPurge: true, meta: true }),
+    })
+
+    afterAll(() => {
+      storage.dispose()
+    })
+
+    it('Successfully sets and gets a key', async () => {
+      await storage.setItem('key', 'value')
+      const data = await storage.getItem('key')
+
+      expect(data).toEqual('value')
+    })
+
+    it('Successfully supports meta', async () => {
+      await storage.setItem('key', 'value')
+      const meta = await storage.getMeta('key')
+
+      expect(meta.atime).toBeInstanceOf(Date)
+    })
+
+    it('Successfully sets and gets a key within ttl', async () => {
+      await storage.setItem('key', 'value', { ttl: 1000 })
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      const meta = await storage.getMeta('key')
+      expect(meta.ttl).toBeLessThan(1000)
+
+      await new Promise(resolve => setTimeout(resolve, 501))
+
+      const dataAfter = await storage.getItem('key')
+      expect(dataAfter).toBeNull()
     })
   })
 })

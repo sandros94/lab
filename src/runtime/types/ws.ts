@@ -2,8 +2,9 @@ import type { PublicRuntimeConfig } from 'nuxt/schema'
 import type { UseWebSocketOptions, UseWebSocketReturn } from '@vueuse/core'
 import type { Peer, Hooks, Message } from 'crossws'
 import type { MultiState } from '.'
-
-type MaybePromise<T> = T | Promise<T>
+import type {
+  MaybePromise,
+} from '#lab/types'
 
 export type { Peer, Hooks, Message }
 

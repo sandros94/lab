@@ -1,4 +1,7 @@
-import { type TransactionOptions, defineDriver, joinKeys } from 'unstorage'
+import type { TransactionOptions, StorageMeta } from 'unstorage'
+import { defineDriver, joinKeys } from 'unstorage'
+
+import type { MaybePromise } from '../types'
 
 export interface MemoryOptions {
   /**
@@ -41,6 +44,36 @@ export interface MemoryDriver {
     size?: number // Size in bytes (optional)
     timeoutId?: NodeJS.Timeout // Track timeout for auto-purge
   }
+}
+
+export interface MemoryDriverMeta extends StorageMeta {
+  ttl?: number
+  atime?: Date
+  mtime?: Date
+  ctime?: Date
+  birthtime?: Date
+  size?: number
+}
+
+export interface MemoryDriverInstance {
+  getInstance: () => Map<string, MemoryDriver>
+  options: MemoryOptions
+  has: (key: string) => boolean
+  hasItem: (key: string) => boolean
+  get: (key: string) => any
+  getItem: (key: string) => any
+  getItemRaw: (key: string) => any
+  set: (key: string, value: any, tOpts?: TransactionOptions) => void
+  setItem: (key: string, value: any, tOpts?: TransactionOptions) => void
+  setItemRaw: (key: string, value: any, tOpts?: TransactionOptions) => void
+  del: (key: string) => void
+  remove: (key: string) => void
+  removeItem: (key: string) => void
+  keys: () => string[]
+  getKeys: () => string[]
+  getMeta: (key: string) => MaybePromise<MemoryDriverMeta | null>
+  clear: () => void
+  dispose: () => void
 }
 
 const DRIVER_NAME = 'memory-meta'
@@ -94,6 +127,12 @@ export default defineDriver((opts: MemoryOptions) => {
       data.set(pKey, { data: value, meta })
     }
   }
+  function _removeItem(key: string) {
+    const pKey = p(key)
+    const existing = data.get(pKey)
+    if (existing?.meta?.timeoutId) clearTimeout(existing.meta.timeoutId)
+    data.delete(pKey)
+  }
   function _calculateSize(value: any): number {
     if (value === null || value === undefined) return 0
     if (typeof value === 'string') return value.length
@@ -108,31 +147,38 @@ export default defineDriver((opts: MemoryOptions) => {
     return JSON.stringify(value).length
   }
 
-  return {
+  return <MemoryDriverInstance>{
     name: DRIVER_NAME,
+    options: opts,
     getInstance: () => data,
+    has(key) {
+      return data.has(p(key))
+    },
     hasItem(key) {
       return data.has(p(key))
     },
+    get: key => _get(key),
     getItem: key => _get(key),
     getItemRaw: key => _get(key),
+    set: (key, value, tOpts) => _set(key, value, tOpts),
     setItem: (key, value, tOpts) => _set(key, value, tOpts),
     setItemRaw: (key, value, tOpts) => _set(key, value, tOpts),
-    removeItem(key) {
-      const pKey = p(key)
-      const existing = data.get(pKey)
-      if (existing?.meta?.timeoutId) clearTimeout(existing.meta.timeoutId)
-      data.delete(pKey)
+    del: key => _removeItem(key),
+    remove: key => _removeItem(key),
+    removeItem: key => _removeItem(key),
+    keys() {
+      return [...data.keys()].map(d)
     },
     getKeys() {
       return [...data.keys()].map(d)
     },
-    getMeta(key) {
+    getMeta(key): MaybePromise<MemoryDriverMeta | null> {
       const item = data.get(p(key))?.meta
       if (!item) return null
 
       return {
         ...item,
+        ttl: item.ttl ? item.ttl - Date.now() : undefined,
         atime: item.atime ? new Date(item.atime) : undefined,
         mtime: item.mtime ? new Date(item.mtime) : undefined,
         ctime: item.ctime ? new Date(item.ctime) : undefined,
