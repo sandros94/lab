@@ -36,7 +36,7 @@ export default defineNuxtModule<ModuleOptions>({
     cache: null,
     kv: false,
     zlib: false,
-    valibot: true,
+    valibot: false,
     monacoEditor: false,
   },
   async setup(options, nuxt) {

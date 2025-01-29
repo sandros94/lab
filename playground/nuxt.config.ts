@@ -6,13 +6,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-12-15',
 
   lab: {
-    monacoEditor: true, // default `false`
-
     cache: 'mem', // default `null`
 
     mem: {
       ttl: 10 * 60, // 10 minutes
-    },
+    }, // always available
 
     kv: {
       ttl: 10 * 60, // 10 minutes
@@ -28,6 +26,8 @@ export default defineNuxtConfig({
       },
     }, // default `false`
 
-    valibot: true,
+    valibot: true, // default `false`
+
+    monacoEditor: true, // default `false`
   },
 })
