@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url'
 
 import { createStorage } from 'unstorage'
-import { describe, it, expect, assert, afterAll } from 'vitest'
+import { describe, it, expect, assert, afterAll, afterEach } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils/e2e'
 
 import memoryDriver from '../src/runtime/utils/storage'
@@ -57,8 +57,12 @@ describe('utils', async () => {
       driver: memoryDriver({ ttlAutoPurge: true, meta: true }),
     })
 
-    afterAll(() => {
-      storage.dispose()
+    afterAll(async () => {
+      await storage.dispose()
+    })
+
+    afterEach(async () => {
+      await storage.clear()
     })
 
     it('Successfully sets and gets a key', async () => {
@@ -72,7 +76,7 @@ describe('utils', async () => {
       await storage.setItem('key', 'value')
       const meta = await storage.getMeta('key')
 
-      expect(meta.atime).toBeInstanceOf(Date)
+      expect(meta.birthtime).toBeInstanceOf(Date)
     })
 
     it('Successfully sets and gets a key within ttl', async () => {
