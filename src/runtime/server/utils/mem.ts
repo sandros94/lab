@@ -23,27 +23,27 @@ export function useMemZlib<T extends StorageValue = StorageValue>(base?: string,
   const { gzip, gunzip } = useZlib(options)
 
   /**
-   * Compresses the given input data using gzip and stores it in the KV store.
+   * Compresses the given input data using gzip and stores it in Memory.
    *
    * @param {string} key - The key to store the compressed data under.
    * @param {any} input - The data to be compressed.
-   * @param {TransactionOptions} [memOpts] - Optional configuration options for the storage operation.
+   * @param {TransactionOptions} [opts] - Optional configuration options for the storage operation.
    * @param {ZlibOptions} [zlibOpts] - Optional configuration options for the compression process.
    * @returns A promise that resolves when the operation is complete.
    */
   async function setGzip(
     key: string,
     input: any,
-    memOpts?: TransactionOptions,
+    opts?: TransactionOptions,
     zlibOpts?: ZlibOptions,
   ): Promise<void> {
     if (input === 'undefined') return mem.removeItem(key)
     const data = await gzip(input, zlibOpts)
-    return mem.setItemRaw<string>(key, serializeRaw(data), memOpts)
+    return mem.setItemRaw<string>(key, serializeRaw(data), opts)
   }
 
   /**
-   * Retrieves compressed data from the KV store without decompressing it.
+   * Retrieves compressed data from Memory without decompressing it.
    *
    * @param {string} key - The key to retrieve the compressed data from.
    * @param {TransactionOptions} [opts] - Optional configuration options for the storage operation.
@@ -60,19 +60,19 @@ export function useMemZlib<T extends StorageValue = StorageValue>(base?: string,
   }
 
   /**
-   * Retrieves compressed data from the KV store, decompresses it, and returns the original data.
+   * Retrieves compressed data from Memory, decompresses it, and returns the original data.
    *
    * @param {string} key - The key to retrieve the compressed data from.
-   * @param {TransactionOptions} [memOpts] - Optional configuration options for the storage operation.
+   * @param {TransactionOptions} [opts] - Optional configuration options for the storage operation.
    * @param {ZlibOptions} [zlibOpts] - Optional configuration options for the decompression process.
    * @returns A promise that resolves to the decompressed data, or null if no data is found.
    */
   async function getGunzip<T = unknown>(
     key: string,
-    memOpts?: TransactionOptions,
+    opts?: TransactionOptions,
     zlibOpts?: ZlibOptions,
   ): Promise<T | null> {
-    const data = await getGzip(key, memOpts)
+    const data = await getGzip(key, opts)
     if (data === null) return data
     else if (typeof data === 'string') return destr<T>(data)
     const test = await gunzip<T>(data, zlibOpts)
