@@ -23,7 +23,7 @@ describe('mem', async () => {
   it('Has data', async () => {
     const data = await $fetch('/api/mem')
 
-    expect(data).toContain('playground:1994')
+    expect(data).toContain('mem:1994')
   })
 
   it('Gets data', async () => {

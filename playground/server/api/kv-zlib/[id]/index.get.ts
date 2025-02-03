@@ -4,5 +4,5 @@ export default defineEventHandler(async (event) => {
   }))
 
   appendResponseHeader(event, 'Content-Encoding', 'gzip')
-  return useKV('playground-zlib').getGzip(id)
+  return useKV('kv-zlib').getGzip(id)
 })

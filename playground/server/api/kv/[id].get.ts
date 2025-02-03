@@ -3,5 +3,5 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  return useKV('playground').getItem(id)
+  return useKV('kv').getItem(id)
 })
