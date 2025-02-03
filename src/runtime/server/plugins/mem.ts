@@ -10,14 +10,11 @@ export default defineNitroPlugin(() => {
 
   const driver = memDriver(options)
 
+  storage.unmount('MEM')
+  storage.mount('MEM', driver)
   if (labConfig.cache === 'mem') {
-    // Mount driver as cache
+    // Also mount as cache driver
     storage.unmount('CACHE')
     storage.mount('CACHE', driver)
-  }
-  else {
-    // Mount driver as MEMORY
-    storage.unmount('MEMORY')
-    storage.mount('MEMORY', driver)
   }
 })

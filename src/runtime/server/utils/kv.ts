@@ -1,6 +1,6 @@
 import { destr } from 'destr'
 
-import { useStorage, useRuntimeConfig } from '#imports'
+import { useStorage } from '#imports'
 import { useZlib } from '#lab/server/utils/zlib'
 import type {
   TransactionOptions,
@@ -15,9 +15,7 @@ import {
 } from '#lab/utils/unstorage'
 
 export function useKV<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
-  const { cache } = useRuntimeConfig().lab
-  const _base = cache === 'kv' ? 'CACHE' : 'KV'
-  return useStorage(base ? `${_base}:${base}` : _base)
+  return useStorage(`KV${base ? `:${base}` : ''}`)
 }
 
 export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
