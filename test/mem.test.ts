@@ -23,12 +23,20 @@ describe('mem', async () => {
   it('Has data', async () => {
     const data = await $fetch('/api/mem')
 
-    expect(data).toContain('mem:1994')
+    expect(data).toContain('1994')
   })
 
   it('Gets data', async () => {
     const data = await $fetch(`/api/mem/${dataId}`)
 
     expect(data).toStrictEqual(dataBody)
+  })
+
+  it('cleared the storage', async () => {
+    const data = await $fetch('/api/mem', {
+      method: 'DELETE',
+    })
+
+    expect(data).toStrictEqual(0)
   })
 })

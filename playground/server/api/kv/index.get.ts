@@ -1,3 +1,3 @@
 export default defineEventHandler(() => {
-  return useKV().getKeys()
+  return useKV('playground').getKeys()
 })

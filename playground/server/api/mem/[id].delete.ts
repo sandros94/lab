@@ -3,6 +3,6 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  await useMem('mem').removeItem(id)
+  await useMem('playground').removeItem(id)
   return { success: true }
 })

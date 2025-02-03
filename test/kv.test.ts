@@ -23,12 +23,20 @@ describe('kv', async () => {
   it('Has data', async () => {
     const data = await $fetch('/api/kv')
 
-    expect(data).toContain('kv:1994')
+    expect(data).toContain('1994')
   })
 
   it('Gets data', async () => {
     const data = await $fetch(`/api/kv/${dataId}`)
 
     expect(data).toStrictEqual(dataBody)
+  })
+
+  it('cleared the storage', async () => {
+    const data = await $fetch('/api/kv', {
+      method: 'DELETE',
+    })
+
+    expect(data).toStrictEqual(0)
   })
 })

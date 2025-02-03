@@ -3,5 +3,5 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  return useMem('mem').getItem(id)
+  return useMem('playground').getItem(id)
 })
