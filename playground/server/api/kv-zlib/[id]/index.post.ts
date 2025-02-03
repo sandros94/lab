@@ -6,6 +6,6 @@ export default defineEventHandler(async (event) => {
     useValidatedBody(event, v.optional(v.record(v.string(), v.any()))),
   ])
 
-  await useKV('kv-zlib').setGzip(id, body)
+  await useKV('playground-zlib').setGzip(id, body)
   return { success: true }
 })

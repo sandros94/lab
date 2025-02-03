@@ -3,5 +3,5 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  return useKV('kv-zlib').getGunzip(id)
+  return useKV('playground-zlib').getGunzip(id)
 })

@@ -3,5 +3,5 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  return useMem('mem-zlib').getGunzip(id)
+  return useMem('playground-zlib').getGunzip(id)
 })

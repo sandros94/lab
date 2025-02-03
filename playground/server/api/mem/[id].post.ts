@@ -6,6 +6,6 @@ export default defineEventHandler(async (event) => {
     useValidatedBody(event, v.optional(v.record(v.string(), v.any()))),
   ])
 
-  await useMem('mem').setItem(id, body || {})
+  await useMem('playground').setItem(id, body || {})
   return { success: true }
 })

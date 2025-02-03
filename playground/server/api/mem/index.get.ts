@@ -1,3 +1,3 @@
 export default defineEventHandler(() => {
-  return useMem().getKeys()
+  return useMem('playground').getKeys()
 })

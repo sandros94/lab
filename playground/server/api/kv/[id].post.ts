@@ -6,6 +6,6 @@ export default defineEventHandler(async (event) => {
     useValidatedBody(event, v.optional(v.record(v.string(), v.any()))),
   ])
 
-  await useKV('kv').setItem(id, body || {})
+  await useKV('playground').setItem(id, body || {})
   return { success: true }
 })

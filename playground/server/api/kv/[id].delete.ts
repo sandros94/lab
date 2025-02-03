@@ -3,6 +3,6 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  await useKV('kv').removeItem(id)
+  await useKV('playground').removeItem(id)
   return { success: true }
 })
