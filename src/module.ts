@@ -36,10 +36,6 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     ws: false,
     cache: null,
-    fs: {
-      base: '.data/lab',
-      ignore: ['**/node_modules/**', '**/.git/**'],
-    },
     kv: false,
     zlib: false,
     valibot: false,
@@ -53,26 +49,30 @@ export default defineNuxtModule<ModuleOptions>({
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
     const labPublicConfig = nuxt.options.runtimeConfig.public.lab ||= {}
     labConfig.cache ||= options.cache
-    labConfig.mem = defu(
+    labConfig.mem = defu<MemoryOptions, [MemoryOptions]>(
       labConfig.mem,
-      options.mem,
+      options.mem || {},
     )
-    labConfig.fs = defu(
+    labConfig.fs = defu<FSStorageOptions, [FSStorageOptions | undefined, FSStorageOptions]>(
       labConfig.fs,
       options.fs,
+      {
+        base: '.data/lab',
+        ignore: ['**/node_modules/**', '**/.git/**'],
+      },
     )
-    labConfig.kv = defu(
+    labConfig.kv = defu<RedisOptions, RedisOptions[]>(
       labConfig.kv,
-      typeof options.kv === 'boolean' ? {} : options.kv,
+      options.kv && typeof options.kv !== 'boolean' ? options.kv : {},
       DEFAULT_KV_OPTIONS,
     )
-    labConfig.zlib = defu(
+    labConfig.zlib = defu<ZlibOptions, [ZlibOptions]>(
       labConfig.zlib,
-      typeof options.zlib === 'boolean' ? {} : options.zlib,
+      options.zlib && typeof options.zlib !== 'boolean' ? options.zlib : {},
     )
-    labPublicConfig.ws = defu(
+    labPublicConfig.ws = defu<WSConfig, [WSConfig, WSConfig]>(
       labPublicConfig.ws,
-      typeof options.ws === 'boolean' ? {} : options.ws,
+      options.ws && typeof options.ws !== 'boolean' ? options.ws : {},
       {
         channels: {
           defaults: [],
