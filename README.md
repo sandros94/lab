@@ -15,12 +15,11 @@ The goal of this project is mainly to simplify my prototyping process and learn 
 ## Features
 
 - `useMem`: integrates an in-memory kv store, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
-  - **Gzip Compression/Decompression**: taking advantage of `node:zlib` it provides a set of functions to `useMem` to automatically store and retrive compressed data (server-only).
-- `useKV`: integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
-  - **Gzip Compression/Decompression**: same as `useMem`, but applied to `useKV`.
-- `useZlib`: used under the hood by `useKV` to provide gzip support during KV store operations.
-- `useWS`+`useWebSocketHandler` ([demo](https://reactive-ws.s94.dev/)): A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
-- **Built-in validation**: using [`valibot`](https://valibot.dev) and [`h3-valibot`](https://github.com/intevel/h3-valibot) under the hood (client and server).
+- `useFS`: integrates a filesystem kv store, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
+- `useKV` (optional): integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
+- `useZlib` (optional): when enabled, it automatically provides gzip compression and decompression functions to `useMem`, `useFS` and `useKV` (server-only).
+- `useWS`+`useWebSocketHandler` ([demo](https://reactive-ws.s94.dev/), optional): A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
+- **Built-in validation** (optional): using [`valibot`](https://valibot.dev) and [`h3-valibot`](https://github.com/intevel/h3-valibot) under the hood (client and server).
 
 ## Quick Setup
 
@@ -37,7 +36,7 @@ export default defineNuxtConfig({
   modules: ['@sandros94/lab'],
 
   lab: {
-    cache: 'kv', // default 'mem'
+    cache: 'kv',  // 'mem', 'fs', 'kv' or null (default)
     kv: true,     // default false
     zlib: true,   // default false
     valibot: true // default true
@@ -54,7 +53,10 @@ export default defineNuxtConfig({
   lab: {
     mem: {
       ttl: 10 * 60,
-    }
+    },
+    fs: {
+      base: '.data/myStore', // Default '.data/lab'
+    },
     kv: {
       ttl: 10 * 60,
     }
@@ -62,7 +64,7 @@ export default defineNuxtConfig({
 })
 ```
 
-You can also edit them via env vars: `NUXT_LAB_KV_*` and `NUXT_LAB_ZLIB_*`. Useful in situations like editing `NUXT_LAB_KV_URL` without rebuilding the application.
+You can also edit them via env vars: `NUXT_LAB_{MEM|FS|KV|ZLIB}_*`. Useful in situations like editing `NUXT_LAB_KV_URL` at runtime without rebuilding the application.
 
 ## Utils
 
@@ -85,6 +87,11 @@ When combined with `zlib` it also receives the following functions:
 - `setGzip`: Compresses data using gzip and stores it in the KV store.
 - `getGzip`: Retrieves compressed data from the KV store without decompressing it.
 - `getGunzip`: Retrieves compressed data from the KV store, decompresses it, and returns the original data.
+
+### `useFS`
+
+Based on `useStorage` and `usestorage`'s `fs` driver, to provide runtime-editable support for storing data on the filesystem.
+It can also be combiled with `zlib` to provide gzip support as described above.
 
 ### `useKV` (optional)
 
@@ -205,26 +212,23 @@ states['myDynamicChannel']
   
   ```bash
   # Install dependencies
-  npm install
+  pnpm install
   
   # Generate type stubs
-  npm run dev:prepare
+  pnpm run dev:prepare
   
   # Develop with the playground
-  npm run dev
+  pnpm run dev
   
   # Build the playground
-  npm run dev:build
+  pnpm run dev:build
   
   # Run ESLint
-  npm run lint
+  pnpm run lint
   
   # Run Vitest
-  npm run test
-  npm run test:watch
-  
-  # Release new version
-  npm run release
+  pnpm run test
+  pnpm run test:watch
   ```
 
 </details>
