@@ -4,5 +4,5 @@ export default defineEventHandler(async (event) => {
   }))
 
   appendResponseHeader(event, 'Content-Encoding', 'gzip')
-  return useS3('playground-zlib').getGzip(`${id}.gzip`)
+  return useS3('playground-zlib').getGzip(`${id}.json`)
 })

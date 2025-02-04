@@ -4,5 +4,5 @@ export default defineEventHandler(async (event) => {
   }))
 
   appendResponseHeader(event, 'Content-Encoding', 'gzip')
-  return useFS('playground-zlib').getGzip(`${id}.gzip`)
+  return useFS('playground-zlib').getGzip(`${id}.json`)
 })

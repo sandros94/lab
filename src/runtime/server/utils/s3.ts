@@ -14,9 +14,14 @@ export function useS3<T extends StorageValue = StorageValue>(base?: string): Sto
   return useStorage(`lab:s3${base ? `:${base}` : ''}`)
 }
 
-export function useS3Zlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
+export function useS3Zlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions & { suffix?: string }): StorageZlib<T> {
+  const { suffix, ..._options } = options || {}
   const s3 = useS3<T>(base)
-  const { gzip, gunzip } = useZlib(options)
+  const { gzip, gunzip } = useZlib(_options)
+
+  function s(key: string) {
+    return suffix ? `${key}.${suffix}` : `${key}.gz`
+  }
 
   /**
    * Compresses the given input data using gzip and stores it on the FileSystem.
@@ -35,7 +40,7 @@ export function useS3Zlib<T extends StorageValue = StorageValue>(base?: string, 
   ): Promise<void> {
     if (input === 'undefined') return s3.removeItem(key)
     const data = await gzip(input, zlibOpts)
-    return s3.setItemRaw<Buffer>(key, data, opts)
+    return s3.setItemRaw<Buffer>(s(key), data, opts)
   }
 
   /**
@@ -50,7 +55,7 @@ export function useS3Zlib<T extends StorageValue = StorageValue>(base?: string, 
     key: string,
     opts?: TransactionOptions,
   ): Promise<Buffer | null> {
-    const data = await s3.getItemRaw<Buffer>(key, opts)
+    const data = await s3.getItemRaw<Buffer>(s(key), opts)
     if (!data) return null
     return Buffer.from(data)
   }

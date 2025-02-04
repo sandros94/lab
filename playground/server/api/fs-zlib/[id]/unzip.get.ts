@@ -3,5 +3,5 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  return useFS('playground-zlib').getGunzip(`${id}.gzip`)
+  return useFS('playground-zlib').getGunzip(`${id}.json`)
 })

@@ -6,6 +6,6 @@ export default defineEventHandler(async (event) => {
     useValidatedBody(event, v.optional(v.record(v.string(), v.any()))),
   ])
 
-  await useFS('playground-zlib').setGzip(`${id}.gzip`, body)
+  await useFS('playground-zlib').setGzip(`${id}.json`, body)
   return { success: true }
 })

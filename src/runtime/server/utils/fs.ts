@@ -1,5 +1,3 @@
-import { destr } from 'destr'
-
 import { useStorage } from '#imports'
 import { useZlib } from '#lab/server/utils/zlib'
 import type {
@@ -14,9 +12,14 @@ export function useFS<T extends StorageValue = StorageValue>(base?: string): Sto
   return useStorage(`lab:fs${base ? `:${base}` : ''}`)
 }
 
-export function useFSZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
+export function useFSZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions & { suffix?: string }): StorageZlib<T> {
+  const { suffix, ..._options } = options || {}
   const fs = useFS<T>(base)
-  const { gzip, gunzip } = useZlib(options)
+  const { gzip, gunzip } = useZlib(_options)
+
+  function s(key: string) {
+    return suffix ? `${key}.${suffix}` : `${key}.gz`
+  }
 
   /**
    * Compresses the given input data using gzip and stores it on the FileSystem.
@@ -35,7 +38,7 @@ export function useFSZlib<T extends StorageValue = StorageValue>(base?: string, 
   ): Promise<void> {
     if (input === 'undefined') return fs.removeItem(key)
     const data = await gzip(input, zlibOpts)
-    return fs.setItemRaw<Buffer>(key, data, opts)
+    return fs.setItemRaw<Buffer>(s(key), data, opts)
   }
 
   /**
@@ -50,7 +53,7 @@ export function useFSZlib<T extends StorageValue = StorageValue>(base?: string, 
     key: string,
     opts?: TransactionOptions,
   ): Promise<Buffer | null> {
-    return fs.getItemRaw<Buffer>(key, opts)
+    return fs.getItemRaw<Buffer>(s(key), opts)
   }
 
   /**
@@ -68,9 +71,7 @@ export function useFSZlib<T extends StorageValue = StorageValue>(base?: string, 
   ): Promise<T | null> {
     const data = await getGzip(key, opts)
     if (data === null) return data
-    else if (typeof data === 'string') return destr<T>(data)
-    const test = await gunzip<T>(data, zlibOpts)
-    return test
+    return gunzip<T>(data, zlibOpts)
   }
 
   return {
