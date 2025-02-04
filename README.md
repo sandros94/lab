@@ -100,12 +100,15 @@ When combined with `zlib` it also receives the following functions:
 ### `useFS`
 
 Based on `useStorage` and `usestorage`'s `fs` driver, to provide runtime-editable support for storing data on the filesystem.
-It can also be combiled with `zlib` to provide gzip support as described above.
+It can also be combiled with `zlib` to provide gzip support as described above (by default a `.gz` suffix is added to the key).
+
+>[NOTE]
+>By default data is stored under `.data/lab` in the project root. You can change this by setting `lab.fs.base` in your `nuxt.config.ts`.
 
 ### `useS3` (optional)
 
 Based on `useStorage` and `usestorage`'s `s3` driver, to provide runtime-editable support with any S3 compatible storages.
-It can also be combiled with `zlib` to provide gzip support as described above.
+It can also be combiled with `zlib` to provide gzip support as described above (by default a `.gz` suffix is added to the key).
 
 ### `useKV` (optional)
 
