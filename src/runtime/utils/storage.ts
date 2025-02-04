@@ -185,9 +185,9 @@ export default defineDriver((opts: MemoryOptions) => {
         birthtime: item.birthtime ? new Date(item.birthtime) : undefined,
       }
     },
-    clear() {
+    clear(path?: string) {
       for (const [key, item] of data) {
-        if (key.startsWith(base)) {
+        if (key.startsWith(path ? p(path) : base)) {
           if (item.meta?.timeoutId) clearTimeout(item.meta.timeoutId)
           data.delete(key)
         }
