@@ -32,4 +32,12 @@ describe('kv-zlib', async () => {
 
     expect(data).toStrictEqual(dataBody)
   })
+
+  it('cleared the storage', async () => {
+    const data = await $fetch('/api/kv', {
+      method: 'DELETE',
+    })
+
+    expect(data).toStrictEqual(0)
+  })
 })

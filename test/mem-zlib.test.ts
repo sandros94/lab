@@ -32,4 +32,12 @@ describe('mem-zlib', async () => {
 
     expect(data).toStrictEqual(dataBody)
   })
+
+  it('cleared the storage', async () => {
+    const data = await $fetch('/api/mem', {
+      method: 'DELETE',
+    })
+
+    expect(data).toStrictEqual(0)
+  })
 })
