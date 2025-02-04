@@ -12,6 +12,8 @@ export default defineNuxtConfig({
       ttl: 10 * 60, // 10 minutes
     }, // always available
 
+    s3: true,
+
     kv: {
       ttl: 10 * 60, // 10 minutes
     }, // default `false`

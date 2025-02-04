@@ -23,9 +23,9 @@
   ],
   "scripts": {
     "prepack": "nuxt-module-build build",
-    "dev": "nuxi dev playground",
-    "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "dev": "nuxi dev playground --dotenv=../.env",
+    "dev:build": "nuxi build playground --dotenv=../.env",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground --dotenv=../.env",
     "release": "pnpm lint && pnpm test && pnpm prepack && changelogen --release --push --publish",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -48,6 +48,9 @@
     "@vueuse/code": {
       "optional": true
     },
+    "aws4fetch": {
+      "optional": true
+    },
     "crossws": {
       "optional": true
     },
@@ -63,6 +66,7 @@
     "@nuxtjs/mdc": "^0.12.1",
     "@unhead/vue": "^1.11.15",
     "@vueuse/core": "^12.4.0",
+    "aws4fetch": "^1.0.20",
     "crossws": "^0.3.1",
     "defu": "^6.1.4",
     "h3-valibot": "^0.0.9",

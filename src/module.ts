@@ -12,6 +12,7 @@ import { defu } from 'defu'
 import type { Import } from 'unimport'
 import { ensureDependencyInstalled } from 'nypm'
 import type { FSStorageOptions } from 'unstorage/drivers/fs'
+import type { S3DriverOptions } from 'unstorage/drivers/s3'
 import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
@@ -19,9 +20,10 @@ import type { WSConfig, MemoryOptions } from './runtime/types'
 
 export interface ModuleOptions {
   ws?: boolean | WSConfig
-  cache?: 'mem' | 'fs' | 'kv' | null
+  cache?: 'mem' | 'fs' | 's3' | 'kv' | null
   mem?: MemoryOptions
   fs?: FSStorageOptions
+  s3?: boolean | S3DriverOptions
   kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
   valibot?: boolean
@@ -36,6 +38,7 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     ws: false,
     cache: null,
+    s3: false,
     kv: false,
     zlib: false,
     valibot: false,
@@ -60,6 +63,18 @@ export default defineNuxtModule<ModuleOptions>({
         base: '.data/lab',
         ignore: ['**/node_modules/**', '**/.git/**'],
       },
+    )
+    labConfig.s3 = defu<S3DriverOptions, [S3DriverOptions]>(
+      labConfig.s3,
+      options.s3 && typeof options.s3 !== 'boolean'
+        ? options.s3
+        : {
+            endpoint: '',
+            region: '',
+            bucket: '',
+            accessKeyId: '',
+            secretAccessKey: '',
+          },
     )
     labConfig.kv = defu<RedisOptions, RedisOptions[]>(
       labConfig.kv,
@@ -124,6 +139,12 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'useZlib',
         from: resolve('./runtime/server/utils/zlib'),
       })
+
+    if (options.s3 !== false) {
+      addServerPlugin(resolve('./runtime/server/plugins/s3'))
+      if (options.zlib !== false) serverImports.push({ name: 'useS3Zlib', as: 'useS3', from: resolve('./runtime/server/utils/s3') })
+      else serverImports.push({ name: 'useS3', as: 'useS3', from: resolve('./runtime/server/utils/s3') })
+    }
 
     if (options.kv !== false) {
       addServerPlugin(resolve('./runtime/server/plugins/kv'))
@@ -190,9 +211,10 @@ export default defineNuxtModule<ModuleOptions>({
 declare module '@nuxt/schema' {
   interface RuntimeConfig {
     lab: {
-      cache?: 'mem' | 'fs' | 'kv' | null
+      cache?: 'mem' | 'fs' | 's3' | 'kv' | null
       mem?: MemoryOptions
       fs?: FSStorageOptions
+      s3?: S3DriverOptions
       kv?: RedisOptions
       zlib?: ZlibOptions
     }
@@ -208,6 +230,7 @@ declare module 'nitropack' {
   interface NitroRuntimeHooks {
     'lab:mem:config': (options: RedisOptions) => void
     'lab:fs:config': (options: FSStorageOptions) => void
+    'lab:s3:config': (options: S3DriverOptions) => void
     'lab:kv:config': (options: RedisOptions) => void
     'lab:zlib:config': (options: ZlibOptions) => void
   }

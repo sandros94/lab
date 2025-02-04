@@ -15,7 +15,8 @@ The goal of this project is mainly to simplify my prototyping process and learn 
 ## Features
 
 - `useMem`: integrates an in-memory kv store, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
-- `useFS`: integrates a filesystem kv store, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
+- `useFS`: integrates a filesystem storage, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
+- `useS3` (optional): integrates any S3 compatible storage, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
 - `useKV` (optional): integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
 - `useZlib` (optional): when enabled, it automatically provides gzip compression and decompression functions to `useMem`, `useFS` and `useKV` (server-only).
 - `useWS`+`useWebSocketHandler` ([demo](https://reactive-ws.s94.dev/), optional): A WebSocket implementation with built-in shared state management, channel subscriptions, and type safety.
@@ -37,6 +38,7 @@ export default defineNuxtConfig({
 
   lab: {
     cache: 'kv',  // 'mem', 'fs', 'kv' or null (default)
+    s3: true,     // default false
     kv: true,     // default false
     zlib: true,   // default false
     valibot: true // default true
@@ -57,6 +59,13 @@ export default defineNuxtConfig({
     fs: {
       base: '.data/myStore', // Default '.data/lab'
     },
+    s3: {
+      endpoint: 'https://example.com',
+      region: 'us-east-1',
+      bucket: 'myBucket',
+      accessKeyId: '<your-access-key>',      // Best to use env vars
+      secretAccessKey: '<your-secret-key>',  // Best to use env vars
+    },
     kv: {
       ttl: 10 * 60,
     }
@@ -64,7 +73,7 @@ export default defineNuxtConfig({
 })
 ```
 
-You can also edit them via env vars: `NUXT_LAB_{MEM|FS|KV|ZLIB}_*`. Useful in situations like editing `NUXT_LAB_KV_URL` at runtime without rebuilding the application.
+You can also edit them via env vars: `NUXT_LAB_{MEM|FS|S3|KV|ZLIB}_*`. Useful in situations like editing `NUXT_LAB_KV_URL` at runtime without rebuilding the application.
 
 ## Utils
 
@@ -91,6 +100,11 @@ When combined with `zlib` it also receives the following functions:
 ### `useFS`
 
 Based on `useStorage` and `usestorage`'s `fs` driver, to provide runtime-editable support for storing data on the filesystem.
+It can also be combiled with `zlib` to provide gzip support as described above.
+
+### `useS3` (optional)
+
+Based on `useStorage` and `usestorage`'s `s3` driver, to provide runtime-editable support with any S3 compatible storages.
 It can also be combiled with `zlib` to provide gzip support as described above.
 
 ### `useKV` (optional)
