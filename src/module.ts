@@ -167,17 +167,14 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.ws !== false) {
       (nuxt.options.nitro.experimental ||= {}).websocket = true
 
-      await ensureDependencyInstalled('@vueuse/core')
-        .then(() => {
-          appImports.push({
-            name: 'useWSState',
-            from: resolve('./runtime/app/composables/ws'),
-          })
-          appImports.push({
-            name: 'useWS',
-            from: resolve('./runtime/app/composables/ws'),
-          })
-        })
+      appImports.push({
+        name: 'useWSState',
+        from: resolve('./runtime/app/composables/ws'),
+      })
+      appImports.push({
+        name: 'useWS',
+        from: resolve('./runtime/app/composables/ws'),
+      })
 
       serverImports.push({
         name: 'wsHooks',
