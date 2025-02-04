@@ -15,7 +15,7 @@ import {
 } from '#lab/utils/unstorage'
 
 export function useMem<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
-  return useStorage(`MEM${base ? `:${base}` : ''}`)
+  return useStorage(`lab:mem${base ? `:${base}` : ''}`)
 }
 
 export function useMemZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {

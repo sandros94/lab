@@ -10,8 +10,8 @@ export default defineNitroPlugin(() => {
 
   const driver = redisDriver(options)
 
-  storage.unmount('KV')
-  storage.mount('KV', driver)
+  storage.unmount('lab:kv')
+  storage.mount('lab:kv', driver)
   if (labConfig.cache === 'kv') {
     // Also mount as cache driver
     storage.unmount('CACHE')

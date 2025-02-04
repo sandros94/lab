@@ -15,7 +15,7 @@ import {
 } from '#lab/utils/unstorage'
 
 export function useKV<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
-  return useStorage(`KV${base ? `:${base}` : ''}`)
+  return useStorage(`lab:kv${base ? `:${base}` : ''}`)
 }
 
 export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, options?: ZlibOptions): StorageZlib<T> {
