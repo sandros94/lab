@@ -1,6 +1,48 @@
 # Changelog
 
 
+## v0.1.0
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.0.12...v0.1.0)
+
+### 🚀 Enhancements
+
+- **server:** ⚠️  `useMem` ([22b716c](https://github.com/sandros94/lab/commit/22b716c))
+- **`useFS`:** New server util ([f48c88f](https://github.com/sandros94/lab/commit/f48c88f))
+- ⚠️  Improve storage namespacing ([29a0eb7](https://github.com/sandros94/lab/commit/29a0eb7))
+- Improve module typing ([75f2429](https://github.com/sandros94/lab/commit/75f2429))
+- **`useS3`:** New optional server util ([7fa5a8a](https://github.com/sandros94/lab/commit/7fa5a8a))
+- **`useFS`, `useS3`:** Suffix zlib with `.gz` by default ([28d8147](https://github.com/sandros94/lab/commit/28d8147))
+
+### 🩹 Fixes
+
+- Types ([830a15c](https://github.com/sandros94/lab/commit/830a15c))
+- `valibot` disabled by default ([4c82ddc](https://github.com/sandros94/lab/commit/4c82ddc))
+- **`useMem`:** Driver ([de48690](https://github.com/sandros94/lab/commit/de48690))
+- Non-conditional driver mounting ([c480165](https://github.com/sandros94/lab/commit/c480165))
+- **`useMem`:** Stop serializing/deserializing compressed data ([6254e9d](https://github.com/sandros94/lab/commit/6254e9d))
+
+### 💅 Refactors
+
+- Improve ws server util naming ([5e88fa9](https://github.com/sandros94/lab/commit/5e88fa9))
+- Types ([092b8d5](https://github.com/sandros94/lab/commit/092b8d5))
+
+### ✅ Tests
+
+- Update playground naming ([2d894bc](https://github.com/sandros94/lab/commit/2d894bc))
+- Update playground naming" ([ec0a717](https://github.com/sandros94/lab/commit/ec0a717))
+- Fix naming and cleanup ([663abea](https://github.com/sandros94/lab/commit/663abea))
+- Make sure to clear storages as last test ([376555f](https://github.com/sandros94/lab/commit/376555f))
+
+#### ⚠️ Breaking Changes
+
+- **server:** ⚠️  `useMem` ([22b716c](https://github.com/sandros94/lab/commit/22b716c))
+- ⚠️  Improve storage namespacing ([29a0eb7](https://github.com/sandros94/lab/commit/29a0eb7))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](http://github.com/sandros94))
+
 ## v0.0.12
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.11...v0.0.12)
