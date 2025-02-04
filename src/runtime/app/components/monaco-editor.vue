@@ -2,7 +2,7 @@
 import { useScript } from '@unhead/vue'
 import { computed, ref, createError, onMounted, watch, useTemplateRef } from '#imports'
 
-const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.0/min/'
+const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.2/min/'
 const MDC_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@0.4.0/'
 
 declare global {
@@ -190,21 +190,14 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
     }
 
     _editor.onDidContentSizeChange(updateHeight)
-
-    return {
-      editor: _editor,
-      monaco: _monaco,
-    }
+    editor.value = _editor
+    monaco.value = _monaco
   },
 })
 
 onMounted(async () => {
   try {
-    const l = await load()
-    if (!l) return
-
-    monaco.value = l.monaco
-    editor.value = l.editor
+    await load()
   }
   catch (error) {
     console.error('Failed to initialize Monaco:', error)
@@ -221,6 +214,11 @@ watch(() => props.theme, (newTheme) => {
   if (monaco.value) {
     monaco.value.editor.setTheme(newTheme)
   }
+})
+
+defineExpose({
+  monaco,
+  editor,
 })
 </script>
 
