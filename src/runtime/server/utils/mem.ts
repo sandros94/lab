@@ -1,5 +1,3 @@
-import { destr } from 'destr'
-
 import { useStorage } from '#imports'
 import { useZlib } from '#lab/server/utils/zlib'
 import type {
@@ -9,10 +7,6 @@ import type {
   StorageZlib,
   ZlibOptions,
 } from '#lab/types'
-import {
-  serializeRaw,
-  deserializeRaw,
-} from '#lab/utils/unstorage'
 
 export function useMem<T extends StorageValue = StorageValue>(base?: string): Storage<T> {
   return useStorage(`lab:mem${base ? `:${base}` : ''}`)
@@ -39,7 +33,7 @@ export function useMemZlib<T extends StorageValue = StorageValue>(base?: string,
   ): Promise<void> {
     if (input === 'undefined') return mem.removeItem(key)
     const data = await gzip(input, zlibOpts)
-    return mem.setItemRaw<string>(key, serializeRaw(data), opts)
+    return mem.setItemRaw(key, data, opts)
   }
 
   /**
@@ -53,10 +47,8 @@ export function useMemZlib<T extends StorageValue = StorageValue>(base?: string,
   async function getGzip(
     key: string,
     opts?: TransactionOptions,
-  ): Promise<Buffer | string | null> {
-    const data = await mem.getItemRaw(key, opts)
-    if (data === null) return data
-    return deserializeRaw(data)
+  ): Promise<Buffer | null> {
+    return mem.getItemRaw(key, opts)
   }
 
   /**
@@ -74,9 +66,7 @@ export function useMemZlib<T extends StorageValue = StorageValue>(base?: string,
   ): Promise<T | null> {
     const data = await getGzip(key, opts)
     if (data === null) return data
-    else if (typeof data === 'string') return destr<T>(data)
-    const test = await gunzip<T>(data, zlibOpts)
-    return test
+    return gunzip<T>(data, zlibOpts)
   }
 
   return {
