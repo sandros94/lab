@@ -32,11 +32,11 @@ describe.runIf(process.env.NUXT_LAB_S3_ENDPOINT && process.env.NUXT_LAB_S3_REGIO
     expect(data).toStrictEqual(dataBody)
   })
 
-  // it('cleared the storage', async () => {
-  //   const data = await $fetch('/api/s3', {
-  //     method: 'DELETE',
-  //   })
+  it('cleared the storage', async () => {
+    const data = await $fetch('/api/s3', {
+      method: 'DELETE',
+    })
 
-  //   expect(data).toStrictEqual(0)
-  // })
+    expect(data).toStrictEqual(0)
+  })
 })
