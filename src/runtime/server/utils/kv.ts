@@ -89,8 +89,7 @@ export function useKVZlib<T extends StorageValue = StorageValue>(base?: string, 
     const data = await getGzip(key, kvOpts)
     if (data === null) return data
     else if (typeof data === 'string') return destr<T>(data)
-    const test = await gunzip<T>(data, zlibOpts)
-    return test
+    return gunzip<T>(data, zlibOpts)
   }
 
   return {
