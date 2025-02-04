@@ -11,6 +11,7 @@ import {
 import { defu } from 'defu'
 import type { Import } from 'unimport'
 import { ensureDependencyInstalled } from 'nypm'
+import type { FSStorageOptions } from 'unstorage/drivers/fs'
 import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
@@ -18,8 +19,9 @@ import type { WSConfig, MemoryOptions } from './runtime/types'
 
 export interface ModuleOptions {
   ws?: boolean | WSConfig
-  cache?: 'mem' | 'kv' | null
+  cache?: 'mem' | 'fs' | 'kv' | null
   mem?: MemoryOptions
+  fs?: FSStorageOptions
   kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
   valibot?: boolean
@@ -34,6 +36,10 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     ws: false,
     cache: null,
+    fs: {
+      base: '.data/lab',
+      ignore: ['**/node_modules/**', '**/.git/**'],
+    },
     kv: false,
     zlib: false,
     valibot: false,
@@ -50,6 +56,10 @@ export default defineNuxtModule<ModuleOptions>({
     labConfig.mem = defu(
       labConfig.mem,
       options.mem,
+    )
+    labConfig.fs = defu(
+      labConfig.fs,
+      options.fs,
     )
     labConfig.kv = defu(
       labConfig.kv,
@@ -93,8 +103,20 @@ export default defineNuxtModule<ModuleOptions>({
             name: 'useMem',
             from: resolve('./runtime/server/utils/mem'),
           },
+      options.zlib !== false
+        ? {
+            as: 'useFS',
+            name: 'useFSZlib',
+            from: resolve('./runtime/server/utils/fs'),
+          }
+        : {
+            as: 'useFS',
+            name: 'useFS',
+            from: resolve('./runtime/server/utils/fs'),
+          },
     ]
     addServerPlugin(resolve('./runtime/server/plugins/mem'))
+    addServerPlugin(resolve('./runtime/server/plugins/fs'))
 
     // Start check for enabled utils
     if (options.zlib !== false)
@@ -168,8 +190,9 @@ export default defineNuxtModule<ModuleOptions>({
 declare module '@nuxt/schema' {
   interface RuntimeConfig {
     lab: {
-      cache?: 'mem' | 'kv' | null
+      cache?: 'mem' | 'fs' | 'kv' | null
       mem?: MemoryOptions
+      fs?: FSStorageOptions
       kv?: RedisOptions
       zlib?: ZlibOptions
     }
@@ -184,6 +207,7 @@ declare module '@nuxt/schema' {
 declare module 'nitropack' {
   interface NitroRuntimeHooks {
     'lab:mem:config': (options: RedisOptions) => void
+    'lab:fs:config': (options: FSStorageOptions) => void
     'lab:kv:config': (options: RedisOptions) => void
     'lab:zlib:config': (options: ZlibOptions) => void
   }
