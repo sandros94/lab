@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.2
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.1...v0.1.2)
+
+### 🚀 Enhancements
+
+- **MonacoEditor:** Options, reactivity and types ([4f3b194](https://github.com/sandros94/lab/commit/4f3b194))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](http://github.com/sandros94))
+
 ## v0.1.1
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.0...v0.1.1)
