@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useScript } from '@unhead/vue'
+// import type * as Monaco from 'monaco-editor'
 import { computed, ref, createError, onMounted, watch, useTemplateRef } from '#imports'
 
 const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.2/min/'
@@ -12,7 +13,10 @@ declare global {
   }
 }
 
-const editorEl = useTemplateRef('editor')
+// type Editor = ReturnType<typeof Monaco.editor.create>
+type Editor = any
+
+const editorEl = useTemplateRef('editorEl')
 const code = defineModel<string>({ required: true })
 const props = withDefaults(defineProps<{
   fitContent?: boolean
@@ -30,14 +34,15 @@ const props = withDefaults(defineProps<{
   wordWrap: 'on',
   tabSize: 2,
 })
-const monaco = ref()
-const editor = ref()
+let monaco: any // typeof Monaco
+let editor: Editor
+const editorRef = ref<Editor>()
 const styling = computed(() => {
   if (props.fitContent) {
     return {}
   }
   else {
-    return { height: '100%' }
+    return { minHeight: '100%' }
   }
 })
 
@@ -49,6 +54,24 @@ const waitForRequire = async (attempt = 1): Promise<void> => {
   const delays = [0, 100, 250, 500, 2000]
   await new Promise(resolve => setTimeout(resolve, delays[attempt - 1]))
   return waitForRequire(attempt + 1)
+}
+
+const insertTexts = (...texts: string[]) => {
+  if (!editor) {
+    console.error('Monaco editor is not initialized during text insertion')
+    return false
+  }
+  const selection = editor.getSelection()
+  if (!selection) {
+    console.error('No selection found during text insertion')
+    return false
+  }
+
+  return editor.executeEdits(null, texts.map(text => ({
+    range: selection,
+    text,
+    forceMoveMarkers: true,
+  })))
 }
 
 const { status, load } = useScript({
@@ -74,7 +97,7 @@ const { status, load } = useScript({
       // },
     })
 
-    const _monaco = await new Promise<any>((resolve, reject) => {
+    monaco = await new Promise<any>((resolve, reject) => {
       try {
         window.require(['vs/editor/editor.main'], resolve)
       }
@@ -99,9 +122,9 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       formatter: mdcFormatter,
       foldingProvider: mdcFoldingProvider,
     } = await import(/* @vite-ignore */`${MDC_CDN_BASE}dist/index.mjs`)
-    _monaco.languages.register({ id: 'mdc' })
-    _monaco.languages.setMonarchTokensProvider('mdc', mdc)
-    _monaco.languages.registerDocumentFormattingEditProvider('mdc', {
+    monaco.languages.register({ id: 'mdc' })
+    monaco.languages.setMonarchTokensProvider('mdc', mdc)
+    monaco.languages.registerDocumentFormattingEditProvider('mdc', {
       provideDocumentFormattingEdits: (model: any) => [{
         range: model.getFullModelRange(),
         text: mdcFormatter(model.getValue(), {
@@ -109,7 +132,7 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
         }),
       }],
     })
-    _monaco.languages.registerOnTypeFormattingEditProvider('mdc', {
+    monaco.languages.registerOnTypeFormattingEditProvider('mdc', {
       autoFormatTriggerCharacters: ['\n'],
       provideOnTypeFormattingEdits: (model: any) => [{
         range: model.getFullModelRange(),
@@ -119,10 +142,10 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
         }),
       }],
     })
-    _monaco.languages.registerFoldingRangeProvider('mdc', {
+    monaco.languages.registerFoldingRangeProvider('mdc', {
       provideFoldingRanges: (model: any) => mdcFoldingProvider(model),
     })
-    _monaco.languages.setLanguageConfiguration('mdc', {
+    monaco.languages.setLanguageConfiguration('mdc', {
       surroundingPairs: [
         { open: '{', close: '}' },
         { open: '[', close: ']' },
@@ -144,7 +167,7 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       return
     }
 
-    const _editor = _monaco.editor.create(editorEl.value, {
+    editor = monaco.editor.create(editorEl.value, {
       value: code.value,
       language: props.language,
       tabSize: props.tabSize,
@@ -168,6 +191,7 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
         enabled: true,
       },
 
+      smoothScrolling: true,
       roundedSelection: false,
       fontSize: 14,
       padding: {
@@ -175,23 +199,10 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       },
     })
 
-    _editor.onDidChangeModelContent(() => {
-      code.value = _editor.getValue()
+    editor.onDidChangeModelContent(() => {
+      code.value = editor.getValue()
     })
-
-    const updateHeight = () => {
-      if (!props.fitContent) return
-      const contentHeight = _editor.getContentHeight()
-      editorEl.value!.style.height = `${contentHeight}px`
-      _editor.layout({
-        width: editorEl.value!.offsetWidth,
-        height: Math.min(contentHeight, editorEl.value!.offsetHeight),
-      })
-    }
-
-    _editor.onDidContentSizeChange(updateHeight)
-    editor.value = _editor
-    monaco.value = _monaco
+    editorRef.value = editor
   },
 })
 
@@ -204,21 +215,20 @@ onMounted(async () => {
   }
 })
 
-// watch(code, (newCode) => {
-//   if (editor.value && editor.value.getValue() !== newCode) {
-//     editor.value.setValue(newCode)
-//   }
-// })
-
 watch(() => props.theme, (newTheme) => {
-  if (monaco.value) {
-    monaco.value.editor.setTheme(newTheme)
+  if (monaco) {
+    monaco.editor.setTheme(newTheme)
   }
 })
 
+onBeforeMount(() => {
+  if (!editor) return
+  editor.dispose()
+})
+
 defineExpose({
-  monaco,
-  editor,
+  editor: editorRef,
+  insertTexts,
 })
 </script>
 
@@ -228,5 +238,5 @@ defineExpose({
       {{ status }}
     </slot>
   </div>
-  <div v-else ref="editor" :style="styling" />
+  <div v-else ref="editorEl" :style="styling" />
 </template>
