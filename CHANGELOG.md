@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.1.1
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.0...v0.1.1)
+
+### 🚀 Enhancements
+
+- Monaco-editor text insertion ([834b72f](https://github.com/sandros94/lab/commit/834b72f))
+
+### 🩹 Fixes
+
+- Monaco editor ([885ee6d](https://github.com/sandros94/lab/commit/885ee6d))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](http://github.com/sandros94))
+
 ## v0.1.0
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.0.12...v0.1.0)
