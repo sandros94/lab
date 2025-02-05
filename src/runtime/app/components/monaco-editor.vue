@@ -56,7 +56,7 @@ const waitForRequire = async (attempt = 1): Promise<void> => {
   return waitForRequire(attempt + 1)
 }
 
-const insertTexts = (...texts: string[]) => {
+const insertTexts = (...texts: string[]): boolean => {
   if (!editor) {
     console.error('Monaco editor is not initialized during text insertion')
     return false
