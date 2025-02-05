@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url'
-import { describe, it, expect, afterAll } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { setup, $fetch } from '@nuxt/test-utils/e2e'
 
 describe.runIf(process.env.NUXT_LAB_S3_ENDPOINT && process.env.NUXT_LAB_S3_REGION && process.env.NUXT_LAB_S3_BUCKET && process.env.NUXT_LAB_S3_ACCESS_KEY_ID && process.env.NUXT_LAB_S3_SECRET_ACCESS_KEY)('s3', async () => {
@@ -11,12 +11,6 @@ describe.runIf(process.env.NUXT_LAB_S3_ENDPOINT && process.env.NUXT_LAB_S3_REGIO
   const dataBody = {
     test: 'Ciao Mondo!',
   }
-
-  afterAll(async () => {
-    await $fetch('/api/s3', {
-      method: 'DELETE',
-    })
-  })
 
   it('Inserts data', async () => {
     const data = await $fetch(`/api/s3/${dataId}`, {
@@ -36,5 +30,13 @@ describe.runIf(process.env.NUXT_LAB_S3_ENDPOINT && process.env.NUXT_LAB_S3_REGIO
     const data = await $fetch(`/api/s3/${dataId}`)
 
     expect(data).toStrictEqual(dataBody)
+  })
+
+  it('Deletes data', async () => {
+    const data = await $fetch(`/api/s3/${dataId}`, {
+      method: 'DELETE',
+    })
+
+    expect(data).toStrictEqual({ success: true })
   })
 })
