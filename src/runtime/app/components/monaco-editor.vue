@@ -1,42 +1,86 @@
-<script setup lang="ts">
+<script lang="ts">
+import { defu } from 'defu'
 import { useScript } from '@unhead/vue'
-// import type * as Monaco from 'monaco-editor'
-import { computed, ref, createError, onMounted, watch, useTemplateRef } from '#imports'
+import type * as _Monaco from 'monaco-editor'
+import { computed, ref, createError, onMounted, onBeforeUnmount, watch, useTemplateRef } from '#imports'
 
-const MONACO_CDN_BASE = 'https://unpkg.com/monaco-editor@0.52.2/min/'
-const MDC_CDN_BASE = 'https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@0.4.0/'
+export type Monaco = typeof _Monaco
+export type MonacoEditor = _Monaco.editor.IStandaloneCodeEditor
+export type MonacoEditorOptions = _Monaco.editor.IStandaloneEditorConstructionOptions
+export type MonacoEditorOverrides = _Monaco.editor.IEditorOverrideServices
+export type MonacoTextModel = _Monaco.editor.ITextModel
+export type MonacoUri = _Monaco.Uri
 
 declare global {
   interface Window {
     require: any
-    MonacoEnvironment: any
   }
 }
 
-// type Editor = ReturnType<typeof Monaco.editor.create>
-type Editor = any
-
-const editorEl = useTemplateRef('editorEl')
-const code = defineModel<string>({ required: true })
-const props = withDefaults(defineProps<{
+export interface MonacoEditorProps {
   fitContent?: boolean
   language?: string
-  minimap?: boolean
-  readOnly?: boolean
-  theme?: string
-  wordWrap?: 'on' | 'off'
-  tabSize?: number
-}>(), {
-  language: 'mdc',
-  minimap: true,
-  readOnly: false,
-  theme: 'vs-dark',
-  wordWrap: 'on',
+  options?: MonacoEditorOptions
+  overrides?: MonacoEditorOverrides
+  model?: MonacoTextModel
+  theme?: MonacoEditorOptions['theme']
+  modelUri?: MonacoUri
+  versions?: {
+    monaco: string
+    mdc: string
+  }
+}
+export interface MonacoEmits {
+  (event: 'editor:ready', editor: MonacoEditor): void
+}
+</script>
+
+<script setup lang="ts">
+const editorEl = useTemplateRef('editorEl')
+const code = defineModel<string>({ required: true })
+const props = defineProps<MonacoEditorProps>()
+const emits = defineEmits<MonacoEmits>()
+let monaco: Monaco
+let editor: MonacoEditor
+let _model: MonacoTextModel
+const editorRef = ref<MonacoEditor>()
+
+const MONACO_CDN_BASE = `https://unpkg.com/monaco-editor@${props.versions?.monaco || '0.52.2'}/min/`
+const MDC_CDN_BASE = `https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@${props.versions?.mdc || '0.4.0'}/`
+
+const editorOptions = computed(() => defu<MonacoEditorOptions, [MonacoEditorOptions]>(props.options, {
+  value: code.value,
+  language: props.language || 'mdc',
   tabSize: 2,
-})
-let monaco: any // typeof Monaco
-let editor: Editor
-const editorRef = ref<Editor>()
+  wordWrap: 'on',
+  wrappingStrategy: 'advanced',
+  insertSpaces: true,
+  theme: props.theme || 'vs-dark',
+  autoIndent: 'full',
+  folding: true,
+  detectIndentation: false,
+  formatOnType: true,
+  formatOnPaste: true,
+  automaticLayout: true,
+  readOnly: false,
+  minimap: {
+    enabled: true,
+  },
+  lineNumbers: 'on',
+  scrollBeyondLastLine: false,
+  bracketPairColorization: {
+    enabled: true,
+  },
+
+  smoothScrolling: true,
+  roundedSelection: false,
+  fontSize: 14,
+  padding: {
+    top: 8,
+  },
+}))
+const _theme = computed(() => editorOptions.value.theme)
+const _language = computed(() => editorOptions.value.language)
 const styling = computed(() => {
   if (props.fitContent) {
     return {}
@@ -128,7 +172,7 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       provideDocumentFormattingEdits: (model: any) => [{
         range: model.getFullModelRange(),
         text: mdcFormatter(model.getValue(), {
-          tabSize: props.tabSize,
+          tabSize: editorOptions.value.tabSize,
         }),
       }],
     })
@@ -137,7 +181,7 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       provideOnTypeFormattingEdits: (model: any) => [{
         range: model.getFullModelRange(),
         text: mdcFormatter(model.getValue(), {
-          tabSize: props.tabSize,
+          tabSize: editorOptions.value,
           isFormatOnType: true,
         }),
       }],
@@ -167,42 +211,14 @@ importScripts('${MONACO_CDN_BASE}vs/base/worker/workerMain.js');`,
       return
     }
 
-    editor = monaco.editor.create(editorEl.value, {
-      value: code.value,
-      language: props.language,
-      tabSize: props.tabSize,
-      wordWrap: props.wordWrap,
-      wrappingStrategy: 'advanced',
-      insertSpaces: true,
-      theme: props.theme,
-      autoIndent: 'full',
-      folding: true,
-      detectIndentation: false,
-      formatOnType: true,
-      formatOnPaste: true,
-      automaticLayout: true,
-      readOnly: props.readOnly,
-      minimap: {
-        enabled: props.minimap,
-      },
-      lineNumbers: 'on',
-      scrollBeyondLastLine: false,
-      bracketPairColorization: {
-        enabled: true,
-      },
-
-      smoothScrolling: true,
-      roundedSelection: false,
-      fontSize: 14,
-      padding: {
-        top: 8,
-      },
-    })
+    editor = monaco.editor.create(editorEl.value, editorOptions.value, props.overrides)
 
     editor.onDidChangeModelContent(() => {
       code.value = editor.getValue()
     })
     editorRef.value = editor
+
+    emits('editor:ready', editor)
   },
 })
 
@@ -215,15 +231,30 @@ onMounted(async () => {
   }
 })
 
-watch(() => props.theme, (newTheme) => {
-  if (monaco) {
-    monaco.editor.setTheme(newTheme)
+watch(() => [_language, props.modelUri], () => {
+  if (_model) {
+    _model.dispose()
+  }
+  if (monaco && editor) {
+    _model = monaco.editor.createModel(code.value, _language.value, props.modelUri)
+    editor.setModel(_model)
   }
 })
+watch(_theme, (newTheme) => {
+  if (monaco) {
+    monaco.editor.setTheme(newTheme!)
+  }
+})
+watch(editorOptions, (newOptions) => {
+  if (editor)
+    editor.updateOptions(newOptions)
+})
 
-onBeforeMount(() => {
-  if (!editor) return
-  editor.dispose()
+onBeforeUnmount(() => {
+  if (editor)
+    editor.dispose()
+  if (_model)
+    _model.dispose()
 })
 
 defineExpose({
