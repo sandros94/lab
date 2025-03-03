@@ -28,7 +28,7 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
 
   // TODO: make this optional (removing the ability to parse markdown)
   if (!hasNuxtModule('@nuxtjs/mdc', nuxt) || !hasNuxtModule('@nuxt/content', nuxt)) {
-    installModule('@nuxtjs/mdc', undefined, nuxt)
+    installModule('@nuxtjs/mdc')
   }
 
   // TODO: understand why `addServerHandler` catch-all is not working
