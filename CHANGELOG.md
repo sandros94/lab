@@ -1,6 +1,38 @@
 # Changelog
 
 
+## v0.1.3
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.2...v0.1.3)
+
+### 🚀 Enhancements
+
+- Initial static cms implementation ([be1f001](https://github.com/sandros94/lab/commit/be1f001))
+- **cms:** `parsedFiles` hook ([c5f9d49](https://github.com/sandros94/lab/commit/c5f9d49))
+
+### 🩹 Fixes
+
+- **cms:** Use `addServerHandler` ([0042810](https://github.com/sandros94/lab/commit/0042810))
+- **cms:** Missing deps ([6b814b9](https://github.com/sandros94/lab/commit/6b814b9))
+- **cms:** Prerendering ([c4b7b1d](https://github.com/sandros94/lab/commit/c4b7b1d))
+
+### 📖 Documentation
+
+- **cms:** Basic usage ([7c65786](https://github.com/sandros94/lab/commit/7c65786))
+
+### 🏡 Chore
+
+- Update to pnpm@10 ([a77e287](https://github.com/sandros94/lab/commit/a77e287))
+
+### ✅ Tests
+
+- Basic cms test ([c7c2342](https://github.com/sandros94/lab/commit/c7c2342))
+- **cms:** Fetch raw content ([c735214](https://github.com/sandros94/lab/commit/c735214))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](http://github.com/sandros94))
+
 ## v0.1.2
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.1...v0.1.2)
