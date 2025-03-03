@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.4
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.3...v0.1.4)
+
+### 🏡 Chore
+
+- Update all deps ([f4caae4](https://github.com/sandros94/lab/commit/f4caae4))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.3
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.2...v0.1.3)
