@@ -42,6 +42,7 @@ export default defineNuxtConfig({
     kv: true,     // default false
     zlib: true,   // default false
     valibot: true // default false
+    cms: true     // default false
   }
 })
 ```
@@ -68,6 +69,9 @@ export default defineNuxtConfig({
     },
     kv: {
       ttl: 10 * 60,
+    },
+    cms: {
+      addRoutes: true, // default true
     }
   }
 })
@@ -221,6 +225,49 @@ const { myDynamicChannel } = states
 states['myDynamicChannel']
 ```
 
+## CMS (optional)
+
+This is a highly experimental feature.
+Much like [Nuxt Content](https://content.nuxt.com) it allows to load static content from a directory in your project (`cms` by default) and serve it via server util and api routes. The content will be bundled at build time and served both as JSON object (if the format is supported for conversion) and served as is, if the file extension is added in the request.
+
+Supported formats:
+- `.json`
+- `.yaml` (`.yml`)
+- `.toml` (`.tml`)
+- `.md` (`.mdc`)
+
+> [!NOTE]
+> While markdown is supported and parsed via `@nuxtjs/mdc` under the hood, if you are looking for a proper markdown-based CMS, you should use [Nuxt Content](https://content.nuxt.com) instead.
+
+Start by creating a `cms` directory in your project root and adding some content files.
+
+```yaml
+# cms/hello.yaml
+title: Hello World
+content: |
+  This is a test content.
+```
+
+By default it will be served at `/_cms/hello` as JSON, but you can also access it as `/_cms/hello.yaml` to get the raw content.
+
+
+If you want more control, you can disable the built-in routes via `lab.cms.addRoutes: false` (in your `nuxt.config.ts`) and create your own routes:
+
+```ts
+export default defineEventHandler(async (event) => {
+  const slug = getRouterParam(event, 'slug') || 'index'
+  const data = await queryStaticContent(slug)
+
+  if (!data) {
+    throw createError({
+      status: 404,
+      message: 'Not found',
+    })
+  }
+
+  return data
+})
+```
 
 ## Contribution
 
