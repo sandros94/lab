@@ -14,6 +14,10 @@ export interface CMSModuleOptions {
   dir?: string
   addRoute?: boolean
 }
+export interface CMSParsedFile {
+  file?: string
+  path?: string
+}
 
 export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
   const defOptions = defu(options, { dir: 'cms', addRoute: true })
@@ -44,10 +48,19 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
 
   nuxt.options.routeRules ||= {}
   const files = readdirSync(path)
+  const parsedFiles: CMSParsedFile[] = []
   for (const file of files) {
+    const parsedFile: CMSParsedFile = {}
     const ext = extname(file)
-    if (ext)
-      nuxt.options.routeRules[`/_cms/${file.replace(ext, '')}`] = { prerender: true }
-    nuxt.options.routeRules[`/_cms/${file}`] = { prerender: true }
+    if (ext) {
+      nuxt.options.routeRules[join('/_cms', file.replace(ext, ''))] = { prerender: true }
+      parsedFile.path = join('/_cms', file.replace(ext, ''))
+    }
+    nuxt.options.routeRules[join('/_cms', file)] = { prerender: true }
+    parsedFile.file = join('/_cms', file)
+
+    parsedFiles.push(parsedFile)
   }
+
+  nuxt.callHook('lab:cms:parsedFiles', parsedFiles)
 }

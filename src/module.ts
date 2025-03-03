@@ -18,7 +18,11 @@ import type { RedisOptions } from 'unstorage/drivers/redis'
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
 import type { WSConfig, MemoryOptions } from './runtime/types'
 
-import { type CMSModuleOptions, addCMSModule } from './cms'
+import {
+  type CMSModuleOptions,
+  type CMSParsedFile,
+  addCMSModule,
+} from './cms'
 
 export interface ModuleOptions {
   ws?: boolean | WSConfig
@@ -227,6 +231,9 @@ declare module '@nuxt/schema' {
     lab: {
       ws?: WSConfig
     }
+  }
+  interface NuxtHooks {
+    'lab:cms:parsedFiles': (parsedFiles: CMSParsedFile[]) => void
   }
 }
 
