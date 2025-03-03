@@ -32,4 +32,26 @@ describe('cms', async () => {
       },
     })
   })
+
+  it('Successfully fetch raw yaml', async () => {
+    const data = await $fetch(`/_cms/test.yaml`)
+
+    expect(data).toMatchInlineSnapshot(`
+      {
+        "content": "services:
+        first:
+          class: FirstService
+          arguments:
+            - '@second'
+            - '@third'
+        second:
+          class: SecondService
+          arguments:
+            - '@fourth'
+            - '@fifth'
+      ",
+        "type": "yaml",
+      }
+    `)
+  })
 })
