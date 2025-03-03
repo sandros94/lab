@@ -13,6 +13,7 @@ import {
 export interface CMSModuleOptions {
   dir?: string
   addRoute?: boolean
+  prerender?: boolean
 }
 export interface CMSParsedFile {
   file?: string
@@ -20,7 +21,7 @@ export interface CMSParsedFile {
 }
 
 export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
-  const defOptions = defu(options, { dir: 'cms', addRoute: true })
+  const defOptions = defu(options, { dir: 'cms', addRoute: true, prerender: true })
   const { resolve } = createResolver(import.meta.url)
 
   const path = join(nuxt.options.rootDir, defOptions.dir)
@@ -46,21 +47,41 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
       handler: resolve('./runtime/cms/routes'),
     })
 
-  nuxt.options.routeRules ||= {}
-  const files = readdirSync(path)
   const parsedFiles: CMSParsedFile[] = []
-  for (const file of files) {
-    const parsedFile: CMSParsedFile = {}
-    const ext = extname(file)
-    if (ext) {
-      nuxt.options.routeRules[join('/_cms', file.replace(ext, ''))] = { prerender: true }
-      parsedFile.path = join('/_cms', file.replace(ext, ''))
-    }
-    nuxt.options.routeRules[join('/_cms', file)] = { prerender: true }
-    parsedFile.file = join('/_cms', file)
-
-    parsedFiles.push(parsedFile)
+  if (defOptions.prerender) {
+    nuxt.options.routeRules ||= {}
+    scanDirectory(path)
+    nuxt.callHook('lab:cms:parsedFiles', parsedFiles)
   }
 
-  nuxt.callHook('lab:cms:parsedFiles', parsedFiles)
+  // Utility function to scan cms directory
+  function scanDirectory(dirPath: string, basePath: string = ''): void {
+    const files = readdirSync(dirPath, { withFileTypes: true })
+
+    for (const item of files) {
+      const itemPath = join(dirPath, item.name)
+      const relativePath = join(basePath, item.name)
+
+      if (item.isDirectory()) {
+        // Recursively scan subdirectory
+        scanDirectory(itemPath, relativePath)
+      }
+      else {
+        const parsedFile: CMSParsedFile = {}
+        const ext = extname(item.name)
+        const cmsPath = join('/_cms', relativePath)
+
+        if (ext) {
+          const cmsPathWithoutExt = cmsPath.replace(ext, '')
+          nuxt.options.routeRules![cmsPathWithoutExt] = { prerender: true }
+          parsedFile.path = cmsPathWithoutExt
+        }
+
+        nuxt.options.routeRules![cmsPath] = { prerender: true }
+        parsedFile.file = cmsPath
+
+        parsedFiles.push(parsedFile)
+      }
+    }
+  }
 }
