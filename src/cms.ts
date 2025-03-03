@@ -8,7 +8,7 @@ import {
   createResolver,
   hasNuxtModule,
   installModule,
-} from 'nuxt/kit'
+} from '@nuxt/kit'
 
 export interface CMSModuleOptions {
   dir?: string
