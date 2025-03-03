@@ -1,0 +1,11 @@
+services:
+  first:
+    class: FirstService
+    arguments:
+      - '@second'
+      - '@third'
+  second:
+    class: SecondService
+    arguments:
+      - '@fourth'
+      - '@fifth'

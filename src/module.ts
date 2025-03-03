@@ -18,6 +18,8 @@ import type { RedisOptions } from 'unstorage/drivers/redis'
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
 import type { WSConfig, MemoryOptions } from './runtime/types'
 
+import { type CMSModuleOptions, addCMSModule } from './cms'
+
 export interface ModuleOptions {
   ws?: boolean | WSConfig
   cache?: 'mem' | 'fs' | 's3' | 'kv' | null
@@ -28,6 +30,7 @@ export interface ModuleOptions {
   zlib?: boolean | ZlibOptions
   valibot?: boolean
   monacoEditor?: boolean
+  cms?: CMSModuleOptions | boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -43,6 +46,7 @@ export default defineNuxtModule<ModuleOptions>({
     zlib: false,
     valibot: false,
     monacoEditor: false,
+    cms: false,
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -163,6 +167,9 @@ export default defineNuxtModule<ModuleOptions>({
         filePath: resolve('./runtime/app/components/monaco-editor'),
       })
     }
+
+    if (options.cms !== false)
+      addCMSModule(nuxt, options.cms === true ? undefined : options.cms)
 
     if (options.ws !== false) {
       (nuxt.options.nitro.experimental ||= {}).websocket = true

@@ -31,5 +31,7 @@ export default defineNuxtConfig({
     valibot: true, // default `false`
 
     monacoEditor: true, // default `false`
+
+    cms: true, // default `false`
   },
 })
