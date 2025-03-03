@@ -3,6 +3,7 @@ import { normalizeKey } from 'unstorage'
 import { parseTOML, parseYAML } from 'confbox'
 import type { MDCParserResult } from '@nuxtjs/mdc'
 
+// @ts-expect-error `parseMarkdown` is imported from @nuxtjs/mdc
 import { parseMarkdown, useStorage } from '#imports'
 
 export type StaticContentReturn<T = unknown> = {
@@ -132,7 +133,7 @@ export async function queryStaticContent<T>(path: string) {
   }
 }
 
-const _DRIVE_LETTER_START_RE = /^[A-Za-z]:\//
+const _DRIVE_LETTER_START_RE = /^[a-z]:\//i
 const _EXTNAME_RE = /.(\.[^./]+|\.)$/
 
 function fileExt(p: string) {
