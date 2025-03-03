@@ -41,7 +41,7 @@ export default defineNuxtConfig({
     s3: true,     // default false
     kv: true,     // default false
     zlib: true,   // default false
-    valibot: true // default true
+    valibot: true // default false
   }
 })
 ```
