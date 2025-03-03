@@ -1,5 +1,8 @@
+import { queryStaticContent } from './utils'
+import { createError, defineEventHandler } from '#imports'
+
 export default defineEventHandler(async (event) => {
-  const slug = getRouterParam(event, 'slug') || 'index'
+  const slug = event.path.replace('/_cms/', '')
   const data = await queryStaticContent(slug)
 
   if (!data) {

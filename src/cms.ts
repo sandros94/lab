@@ -4,7 +4,7 @@ import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import {
   addServerImports,
-  addServerScanDir,
+  addServerHandler,
   createResolver,
   hasNuxtModule,
   installModule,
@@ -31,14 +31,16 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
     installModule('@nuxtjs/mdc')
   }
 
-  // TODO: understand why `addServerHandler` catch-all is not working
+  addServerImports([{
+    name: 'queryStaticContent',
+    from: resolve('./runtime/cms/utils'),
+  }])
   if (defOptions.addRoute)
-    addServerScanDir(resolve('./runtime/cms'))
-  else
-    addServerImports([{
-      name: 'queryStaticContent',
-      from: resolve('./runtime/cms/utils'),
-    }])
+    addServerHandler({
+      route: '/_cms/**',
+      method: 'get',
+      handler: resolve('./runtime/cms/routes'),
+    })
 
   nuxt.options.routeRules ||= {}
   const files = readdirSync(path)
