@@ -1,6 +1,19 @@
 # Changelog
 
 
+## v0.1.9
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.8...v0.1.9)
+
+### 🩹 Fixes
+
+- **cms:** Missing return type ([50dfcf0](https://github.com/sandros94/lab/commit/50dfcf0))
+- **cms:** Return `undefined` if no `path` was provided ([35cdb11](https://github.com/sandros94/lab/commit/35cdb11))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.8
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.7...v0.1.8)
