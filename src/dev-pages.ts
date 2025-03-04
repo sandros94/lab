@@ -1,7 +1,12 @@
 import type { Nuxt } from '@nuxt/schema'
 import { logger } from './runtime/utils'
 
-export function addDevPagesModule(nuxt: Nuxt) {
+export interface DevPagesModuleOptions {
+  env?: string | undefined
+  isPreview?: boolean
+}
+
+export function addDevPagesModule(nuxt: Nuxt, options?: DevPagesModuleOptions) {
   if (nuxt.options.dev) {
     nuxt.hook('pages:extend', (pages) => {
       logger.log('Pages:', pages)
@@ -21,7 +26,7 @@ export function addDevPagesModule(nuxt: Nuxt) {
     logger.info('Building for production, ignoring `dev` pages')
     nuxt.options.ignore.push('~/pages/**.dev.{js,cts,mts,ts,jsx,tsx,vue}')
 
-    if (import.meta.env.DEPLOYMENT !== 'production') {
+    if (options?.isPreview || (options?.env !== 'production')) {
       nuxt.hook('pages:extend', (pages) => {
         pages.forEach((page) => {
           if (page.path.endsWith('.demo')) {

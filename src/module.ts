@@ -23,7 +23,10 @@ import {
   type CMSParsedFile,
   addCMSModule,
 } from './cms'
-import { addDevPagesModule } from './dev-pages'
+import {
+  type DevPagesModuleOptions,
+  addDevPagesModule,
+} from './dev-pages'
 
 export interface ModuleOptions {
   ws?: boolean | WSConfig
@@ -35,8 +38,8 @@ export interface ModuleOptions {
   zlib?: boolean | ZlibOptions
   valibot?: boolean
   monacoEditor?: boolean
-  cms?: CMSModuleOptions | boolean
-  devPages?: boolean
+  cms?: boolean | CMSModuleOptions
+  devPages?: boolean | DevPagesModuleOptions
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -179,7 +182,7 @@ export default defineNuxtModule<ModuleOptions>({
       addCMSModule(nuxt, options.cms === true ? undefined : options.cms)
 
     if (options.devPages !== false)
-      addDevPagesModule(nuxt)
+      addDevPagesModule(nuxt, options.devPages === true ? undefined : options.devPages)
 
     if (options.ws !== false) {
       (nuxt.options.nitro.experimental ||= {}).websocket = true
