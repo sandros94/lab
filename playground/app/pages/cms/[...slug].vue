@@ -24,10 +24,10 @@
 
 <script setup lang="ts">
 import { joinURL } from 'ufo'
-import type { StaticContentReturn } from '#lab/cms/utils'
+import type { StaticContent } from '#lab/cms'
 
 const { params } = useRoute('slug')
-const { data, error } = await useFetch<StaticContentReturn>(joinURL('/_cms', ...(params.slug || ['index'])), {
+const { data, error } = await useFetch<StaticContent>(joinURL('/_cms', ...(params.slug || ['index'])), {
   watch: [() => params.slug],
 })
 </script>

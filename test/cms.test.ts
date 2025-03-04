@@ -11,6 +11,9 @@ describe('cms', async () => {
     const data = await $fetch(`/_cms/test`)
 
     expect(data).toStrictEqual({
+      ext: '.yaml',
+      file: 'test.yaml',
+      path: 'test',
       type: 'yaml',
       content: {
         services: {
@@ -50,7 +53,10 @@ describe('cms', async () => {
             - '@fourth'
             - '@fifth'
       ",
-        "type": "yaml",
+        "ext": ".yaml",
+        "file": "test.yaml",
+        "path": "test",
+        "type": "raw",
       }
     `)
   })
