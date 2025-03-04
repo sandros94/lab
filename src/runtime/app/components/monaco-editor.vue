@@ -46,7 +46,7 @@ let _model: MonacoTextModel
 const editorRef = ref<MonacoEditor>()
 
 const MONACO_CDN_BASE = `https://unpkg.com/monaco-editor@${props.versions?.monaco || '0.52.2'}/min/`
-const MDC_CDN_BASE = `https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@${props.versions?.mdc || '0.4.0'}/`
+const MDC_CDN_BASE = `https://cdn.jsdelivr.net/npm/@nuxtlabs/monarch-mdc@${props.versions?.mdc || '0.5.0'}/`
 
 const editorOptions = computed(() => defu<MonacoEditorOptions, [MonacoEditorOptions]>(props.options, {
   value: code.value,
