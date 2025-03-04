@@ -54,6 +54,9 @@
     "aws4fetch": {
       "optional": true
     },
+    "consola": {
+      "optional": true
+    },
     "crossws": {
       "optional": true
     },
@@ -73,6 +76,7 @@
     "@unhead/vue": "^1.11.20",
     "@vueuse/core": "^12.7.0",
     "aws4fetch": "^1.0.20",
+    "consola": "^3.4.0",
     "crossws": "^0.3.4",
     "defu": "^6.1.4",
     "h3-valibot": "^0.0.9",
