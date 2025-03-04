@@ -39,10 +39,20 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
     installModule('@nuxtjs/mdc')
   }
 
-  addServerImports([{
-    name: 'queryStaticContent',
-    from: resolve('./runtime/cms/utils'),
-  }])
+  addServerImports([
+    {
+      name: 'queryStaticContent',
+      from: resolve('./runtime/cms/utils'),
+    },
+    {
+      name: 'listStaticContent',
+      from: resolve('./runtime/cms/utils'),
+    },
+    {
+      name: 'useStaticContent',
+      from: resolve('./runtime/cms/utils'),
+    },
+  ])
   if (defOptions.addRoute)
     addServerHandler({
       route: '/_cms/**',
