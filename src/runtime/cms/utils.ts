@@ -59,7 +59,9 @@ export type StaticContent<T = unknown> = Omit<ParseExtReturn, 'type'> & ({
  * // With base directory
  * const posts = await queryStaticContent('latest', 'blog');
  */
-export async function queryStaticContent<T>(path: string, base?: string, opts?: GetKeysOptions): Promise<StaticContent<T> | undefined> {
+export async function queryStaticContent<T>(path?: string, base?: string, opts?: GetKeysOptions): Promise<StaticContent<T> | undefined> {
+  if (!path) return undefined
+
   const storage = useStaticContent()
   const files = await storage.getKeys(base, opts)
   const requestWithExt = !!fileExt(path).ext
