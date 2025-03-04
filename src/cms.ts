@@ -25,8 +25,6 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
   const defOptions = defu(options, { dir: 'cms', addRoute: true, prerender: true })
   const { resolve } = createResolver(import.meta.url)
 
-  nuxt.options.alias['#lab/cms'] = resolve('./runtime/cms/utils')
-
   const path = join(nuxt.options.rootDir, defOptions.dir)
   nuxt.options.nitro.serverAssets ||= []
   nuxt.options.nitro.serverAssets.push({
