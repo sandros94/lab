@@ -9,7 +9,6 @@ export interface DevPagesModuleOptions {
 export function addDevPagesModule(nuxt: Nuxt, options?: DevPagesModuleOptions) {
   if (nuxt.options.dev) {
     nuxt.hook('pages:extend', (pages) => {
-      logger.log('Pages:', pages)
       pages.forEach((page) => {
         if (page.path.endsWith('.dev')) {
           page.path = page.path.replace('.dev', '')
