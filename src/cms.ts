@@ -1,4 +1,4 @@
-import { readdirSync } from 'node:fs'
+import { readdirSync, existsSync } from 'node:fs'
 import { extname, relative, join } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
@@ -9,6 +9,7 @@ import {
   hasNuxtModule,
   installModule,
 } from '@nuxt/kit'
+import { logger } from './runtime/utils'
 
 export interface CMSModuleOptions {
   dir?: string
@@ -58,6 +59,10 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
 
   // Utility function to scan cms directory
   function scanDirectory(dirPath: string, basePath: string = ''): void {
+    if (!existsSync(dirPath)) {
+      logger.error(`CMS directory not found!\nPlease create a directory \`${dirPath}\` in your project's root folder.`)
+      return
+    }
     const files = readdirSync(dirPath, { withFileTypes: true })
 
     for (const item of files) {
