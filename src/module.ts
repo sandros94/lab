@@ -23,6 +23,7 @@ import {
   type CMSParsedFile,
   addCMSModule,
 } from './cms'
+import { addDevPagesModule } from './dev-pages'
 
 export interface ModuleOptions {
   ws?: boolean | WSConfig
@@ -35,6 +36,7 @@ export interface ModuleOptions {
   valibot?: boolean
   monacoEditor?: boolean
   cms?: CMSModuleOptions | boolean
+  devPages?: boolean
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -51,6 +53,7 @@ export default defineNuxtModule<ModuleOptions>({
     valibot: false,
     monacoEditor: false,
     cms: false,
+    devPages: false,
   },
   async setup(options, nuxt) {
     const { resolve } = createResolver(import.meta.url)
@@ -174,6 +177,9 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (options.cms !== false)
       addCMSModule(nuxt, options.cms === true ? undefined : options.cms)
+
+    if (options.devPages !== false)
+      addDevPagesModule(nuxt)
 
     if (options.ws !== false) {
       (nuxt.options.nitro.experimental ||= {}).websocket = true
