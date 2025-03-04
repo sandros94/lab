@@ -1,5 +1,5 @@
 import { readdirSync, existsSync } from 'node:fs'
-import { extname, relative, join } from 'pathe'
+import { relative, join } from 'pathe'
 import type { Nuxt } from '@nuxt/schema'
 import { defu } from 'defu'
 import {
@@ -10,15 +10,16 @@ import {
   installModule,
 } from '@nuxt/kit'
 import { logger } from './runtime/utils'
+import {
+  type ParseExtReturn,
+  normalizeWindowsPath,
+  parseExt,
+} from './runtime/cms/internal'
 
 export interface CMSModuleOptions {
   dir?: string
   addRoute?: boolean
   prerender?: boolean
-}
-export interface CMSParsedFile {
-  file?: string
-  path?: string
 }
 
 export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
@@ -60,45 +61,44 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
       handler: resolve('./runtime/cms/routes'),
     })
 
-  const parsedFiles: CMSParsedFile[] = []
-  if (defOptions.prerender) {
+  const scannedFiles = scanCMSDirectory(nuxt, path)
+
+  if (defOptions.addRoute && defOptions.prerender && scannedFiles) {
     nuxt.options.routeRules ||= {}
-    scanDirectory(path)
-    nuxt.callHook('lab:cms:parsedFiles', parsedFiles)
-  }
+    for (const [file, parsed] of scannedFiles) {
+      if (parsed.env === 'dev' && !nuxt.options.dev) continue
 
-  // Utility function to scan cms directory
-  function scanDirectory(dirPath: string, basePath: string = ''): void {
-    if (!existsSync(dirPath)) {
-      logger.error(`CMS directory not found!\nPlease create a directory \`"${defOptions.dir}"\` in your project root folder.`)
-      return
-    }
-    const files = readdirSync(dirPath, { withFileTypes: true })
-
-    for (const item of files) {
-      const itemPath = join(dirPath, item.name)
-      const relativePath = join(basePath, item.name)
-
-      if (item.isDirectory()) {
-        // Recursively scan subdirectory
-        scanDirectory(itemPath, relativePath)
-      }
-      else {
-        const parsedFile: CMSParsedFile = {}
-        const ext = extname(item.name)
-        const cmsPath = join('/_cms', relativePath)
-
-        if (ext) {
-          const cmsPathWithoutExt = cmsPath.replace(ext, '')
-          nuxt.options.routeRules![cmsPathWithoutExt] = { prerender: true }
-          parsedFile.path = cmsPathWithoutExt
+      if (parsed.type !== 'unknown') {
+        nuxt.options.routeRules[`/_cms/${parsed.path}`] = {
+          prerender: true,
         }
+      }
 
-        nuxt.options.routeRules![cmsPath] = { prerender: true }
-        parsedFile.file = cmsPath
-
-        parsedFiles.push(parsedFile)
+      nuxt.options.routeRules[`/_cms/${file}`] = {
+        prerender: true,
       }
     }
   }
+}
+
+function scanCMSDirectory(nuxt: Nuxt, path: string): Map<string, ParseExtReturn> | undefined {
+  if (!existsSync(path)) {
+    logger.error(`CMS directory not found!\nPlease create a directory \`"${relative(nuxt.options.rootDir, path)}"\` in your project root folder.`)
+    return undefined
+  }
+
+  const scannedFiles: Map<string, ParseExtReturn> = new Map()
+  const files = readdirSync(path, { withFileTypes: true, recursive: true })
+
+  for (const _file of files) {
+    if (_file.isDirectory()) continue
+    const parent = normalizeWindowsPath(_file.parentPath)
+    const file = relative(path, join(parent, normalizeWindowsPath(_file.name)))
+
+    const parsedFile = parseExt(file)
+    scannedFiles.set(file, parsedFile)
+  }
+
+  nuxt.callHook('lab:cms:scannedFiles', Object.fromEntries(scannedFiles), nuxt)
+  return scannedFiles
 }

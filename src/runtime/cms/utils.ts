@@ -3,17 +3,16 @@ import { parseTOML, parseYAML } from 'confbox'
 import type { GetKeysOptions, StorageValue } from 'unstorage'
 import type { MDCParserResult } from '@nuxtjs/mdc'
 
+import {
+  type ParseExtReturn,
+  fileExt,
+  parseExt,
+} from './internal'
+
 // @ts-expect-error `parseMarkdown` is imported from @nuxtjs/mdc
 import { parseMarkdown, useStorage } from '#imports'
 
-export interface ParseExtReturn {
-  file: string | undefined
-  type: 'json' | 'toml' | 'yaml' | 'markdown' | 'unknown'
-  deploy?: 'dev' | 'demo' | undefined
-  path?: string | undefined
-  ext?: string | undefined
-}
-
+export type { ParseExtReturn }
 export type StaticContent<T = unknown> = Omit<ParseExtReturn, 'type'> & ({
   type: 'json'
   content: null | (T extends unknown ? Record<string, any> : T)
@@ -43,7 +42,7 @@ export type StaticContent<T = unknown> = Omit<ParseExtReturn, 'type'> & ({
  *   - `file`: Original file path
  *   - `type`: Content type ('json', 'toml', 'yaml', 'markdown', or 'unknown' | 'raw')
  *   - `content`: The parsed content based on the file type, or null if not found
- *   - `deploy`: Optional deployment target ('dev', 'demo', or undefined)
+ *   - `env`: Optional deployment target ('dev', 'demo', or undefined)
  *   - `path`: The file path without extension
  *   - `ext`: The file extension
  *
@@ -145,7 +144,7 @@ export async function queryStaticContent<T>(path?: string, base?: string, opts?:
  * @returns A promise resolving to an array of `ParseExtReturn` objects containing:
  *   - `file`: Original file path
  *   - `type`: Content type ('json', 'toml', 'yaml', 'markdown', or 'unknown')
- *   - `deploy`: Optional deployment target ('dev', 'demo', or undefined)
+ *   - `env`: Optional deployment target ('dev', 'demo', or undefined)
  *   - `path`: The normalized file path without extension
  *   - `ext`: The file extension
  *
@@ -180,62 +179,4 @@ export async function listStaticContent(base?: string, opts?: GetKeysOptions): P
  */
 export function useStaticContent() {
   return useStorage('assets:cms')
-}
-
-export function parseExt(p: string): ParseExtReturn {
-  const match = fileExt(p)
-  let type: 'json' | 'toml' | 'yaml' | 'markdown' | 'unknown'
-  switch (match.ext) {
-    case '.json':
-      type = 'json'
-      break
-    case '.toml':
-    case '.tml':
-      type = 'toml'
-      break
-    case '.yaml':
-    case '.yml':
-      type = 'yaml'
-      break
-    case '.mdc':
-    case '.md':
-      type = 'markdown'
-      break
-    default:
-      type = 'unknown'
-      break
-  }
-
-  return {
-    ...match,
-    type,
-  }
-}
-
-const _DRIVE_LETTER_START_RE = /^[a-z]:\//i
-const _EXTNAME_RE = /^(?<path>.*?)(?:\.(?<deploy>dev|demo))?(?<ext>\.[^./]+)?$/
-
-function fileExt(file: string) {
-  if (file === '..') return { file: undefined }
-  const match = _EXTNAME_RE.exec(normalizeWindowsPath(file))
-  return (match && match.groups)
-    ? {
-        file,
-        deploy: match.groups.deploy as 'dev' | 'demo' | undefined,
-        path: match.groups.path,
-        ext: match.groups.ext,
-      }
-    : {
-        file,
-      }
-}
-
-// Util to normalize windows paths to posix
-function normalizeWindowsPath(input = '') {
-  if (!input) {
-    return input
-  }
-  return input
-    .replace(/\\/g, '/')
-    .replace(_DRIVE_LETTER_START_RE, r => r.toUpperCase())
 }

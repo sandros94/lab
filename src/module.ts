@@ -1,4 +1,5 @@
 import type { ZlibOptions } from 'node:zlib'
+import type { Nuxt } from '@nuxt/schema'
 import {
   defineNuxtModule,
   addComponent,
@@ -17,10 +18,10 @@ import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
 import type { WSConfig, MemoryOptions } from './runtime/types'
+import type { ParseExtReturn } from './runtime/cms/internal'
 
 import {
   type CMSModuleOptions,
-  type CMSParsedFile,
   addCMSModule,
 } from './cms'
 import {
@@ -242,7 +243,7 @@ declare module '@nuxt/schema' {
     }
   }
   interface NuxtHooks {
-    'lab:cms:parsedFiles': (parsedFiles: CMSParsedFile[]) => void
+    'lab:cms:scannedFiles': (scannedFiles: Record<string, ParseExtReturn>, nuxt: Nuxt) => void
   }
 }
 
