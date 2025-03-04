@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.7
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.6...v0.1.7)
+
+### 🩹 Fixes
+
+- **cms:** Directory error message ([aa8af63](https://github.com/sandros94/lab/commit/aa8af63))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.6
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.5...v0.1.6)
