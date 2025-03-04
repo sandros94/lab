@@ -1,6 +1,27 @@
 # Changelog
 
 
+## v0.1.5
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.4...v0.1.5)
+
+### 🚀 Enhancements
+
+- **devPages:** New lab module ([30abf2b](https://github.com/sandros94/lab/commit/30abf2b))
+
+### 🩹 Fixes
+
+- **devPages:** Make deployment env configurable ([b184aba](https://github.com/sandros94/lab/commit/b184aba))
+- **cms:** Missing utils, returns and types ([b62e766](https://github.com/sandros94/lab/commit/b62e766))
+
+### 🏡 Chore
+
+- Add consola as dep ([3b7900b](https://github.com/sandros94/lab/commit/3b7900b))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.4
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.3...v0.1.4)
