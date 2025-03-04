@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.6
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.5...v0.1.6)
+
+### 🩹 Fixes
+
+- **cms:** Missing root directory check ([fd9c202](https://github.com/sandros94/lab/commit/fd9c202))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.5
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.4...v0.1.5)
