@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v0.1.8
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.7...v0.1.8)
+
+### 🩹 Fixes
+
+- **cms:** Missing auto-imports ([f74d033](https://github.com/sandros94/lab/commit/f74d033))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.7
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.6...v0.1.7)
