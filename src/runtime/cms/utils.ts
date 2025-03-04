@@ -155,7 +155,7 @@ export async function queryStaticContent<T>(path: string, base?: string, opts?: 
  * // List content files in specific directory
  * const blogPosts = await listStaticContent('blog');
  */
-export async function listStaticContent(base?: string, opts?: GetKeysOptions) {
+export async function listStaticContent(base?: string, opts?: GetKeysOptions): Promise<ParseExtReturn[]> {
   const files = await useStaticContent().getKeys(base, opts)
 
   return files.map((file) => {
