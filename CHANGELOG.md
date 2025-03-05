@@ -1,6 +1,22 @@
 # Changelog
 
 
+## v0.1.10
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.9...v0.1.10)
+
+### 🩹 Fixes
+
+- **cms:** Directory scan, prerender and nuxt hook ([e1a4156](https://github.com/sandros94/lab/commit/e1a4156))
+
+### 🏡 Chore
+
+- Update default `@nuxtlabs/monarch-mdc` version ([cb4d45c](https://github.com/sandros94/lab/commit/cb4d45c))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.9
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.8...v0.1.9)
