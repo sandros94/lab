@@ -33,5 +33,6 @@ export default defineNuxtConfig({
     monacoEditor: true, // default `false`
 
     cms: true, // default `false`
+    devPages: true, // default `false`
   },
 })
