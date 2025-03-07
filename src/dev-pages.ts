@@ -11,12 +11,12 @@ export function addDevPagesModule(nuxt: Nuxt, options?: DevPagesModuleOptions) {
     nuxt.hook('pages:extend', (pages) => {
       pages.forEach((page) => {
         if (page.path.endsWith('.dev')) {
-          page.path = page.path.replace('.dev', '')
-          page.name = page.name?.replace('.dev', '')
+          page.path = page.path.replace('.dev', '').replace(/\/index$/, '')
+          page.name = page.name?.replace('.dev', '').replace(/\/index$/, '')
         }
         else if (page.path.endsWith('.demo')) {
-          page.path = page.path.replace('.demo', '')
-          page.name = page.name?.replace('.demo', '')
+          page.path = page.path.replace('.demo', '').replace(/\/index$/, '')
+          page.name = page.name?.replace('.demo', '').replace(/\/index$/, '')
         }
       })
     })
@@ -29,8 +29,8 @@ export function addDevPagesModule(nuxt: Nuxt, options?: DevPagesModuleOptions) {
       nuxt.hook('pages:extend', (pages) => {
         pages.forEach((page) => {
           if (page.path.endsWith('.demo')) {
-            page.path = page.path.replace('.demo', '')
-            page.name = page.name?.replace('.demo', '')
+            page.path = page.path.replace('.demo', '').replace(/\/index$/, '')
+            page.name = page.name?.replace('.demo', '').replace(/\/index$/, '')
           }
         })
       })
