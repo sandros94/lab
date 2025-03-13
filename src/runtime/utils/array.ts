@@ -1,3 +1,27 @@
+/**
+ * Merges two arrays while avoiding duplicates based on a predicate function.
+ *
+ * @template T - Type of the first array
+ * @template U - Type of the second array
+ * @param {T} a - First array
+ * @param {U} b - Second array to merge into the first
+ * @param {function(T[number], U[number]): boolean} predicate - Function to determine if two items are equal
+ *                                                            - Defaults to strict equality (===)
+ * @returns {Array<T[number] | U[number]>} A new array containing all items from the first array
+ *                                         and non-duplicate items from the second array
+ *
+ * @example
+ * // Basic usage with default predicate
+ * merge([1, 2, 3], [2, 3, 4]) // returns [1, 2, 3, 4]
+ *
+ * @example
+ * // With custom predicate for object arrays
+ * merge(
+ *   [{id: 1}, {id: 2}],
+ *   [{id: 2}, {id: 3}],
+ *   (a, b) => a.id === b.id
+ * ) // returns [{id: 1}, {id: 2}, {id: 3}]
+ */
 export function merge<
   T extends Array<unknown> | ReadonlyArray<unknown>,
   U extends Array<unknown> | ReadonlyArray<unknown>,
@@ -15,6 +39,23 @@ export function merge<
   return _a
 }
 
+/**
+ * Randomly shuffles an array and optionally limits the result size.
+ *
+ * @template T - Type of the array
+ * @param {T} array - The array to shuffle
+ * @param {number} [limit] - Optional maximum length of the returned array
+ *                         - If not provided, the entire array will be shuffled
+ * @returns {Array<T[number]>} A new array containing shuffled elements
+ *
+ * @example
+ * // Shuffle entire array
+ * shuffle([1, 2, 3, 4, 5]) // returns randomly ordered array like [3, 1, 5, 2, 4]
+ *
+ * @example
+ * // Shuffle and limit result (like random sampling without replacement)
+ * shuffle([1, 2, 3, 4, 5], 2) // returns 2 random elements like [4, 1]
+ */
 export function shuffle<T extends Array<unknown> | ReadonlyArray<unknown>>(
   array: T,
   limit?: number,
