@@ -28,7 +28,7 @@ export function merge<
 >(
   a: T,
   b: U,
-  predicate = (a: T[number], b: U[number]) => a === b,
+  predicate: (aN: T[number], bN: U[number]) => boolean = (a: T[number], b: U[number]) => a === b,
 ): Array<T[number] | U[number]> {
   const _a = [...a]
   b.forEach((bItem: U[number]) => (
