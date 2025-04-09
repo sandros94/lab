@@ -3,7 +3,6 @@ import type { Nuxt } from '@nuxt/schema'
 import {
   defineNuxtModule,
   addComponent,
-  addImports,
   addServerPlugin,
   addServerImports,
   createResolver,
@@ -17,7 +16,7 @@ import type { S3DriverOptions } from 'unstorage/drivers/s3'
 import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
-import type { WSConfig, MemoryOptions } from './runtime/types'
+import type { MemoryOptions } from './runtime/types'
 import type { ParseExtReturn } from './runtime/cms/internal'
 
 import {
@@ -30,7 +29,6 @@ import {
 } from './dev-pages'
 
 export interface ModuleOptions {
-  ws?: boolean | WSConfig
   cache?: 'mem' | 'fs' | 's3' | 'kv' | null
   mem?: MemoryOptions
   fs?: FSStorageOptions
@@ -49,7 +47,6 @@ export default defineNuxtModule<ModuleOptions>({
     configKey: 'lab',
   },
   defaults: {
-    ws: false,
     cache: null,
     s3: false,
     kv: false,
@@ -65,7 +62,6 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.alias['#lab'] = resolve('./runtime')
 
     const labConfig = nuxt.options.runtimeConfig.lab ||= {}
-    const labPublicConfig = nuxt.options.runtimeConfig.public.lab ||= {}
     labConfig.cache ||= options.cache
     labConfig.mem = defu<MemoryOptions, [MemoryOptions]>(
       labConfig.mem,
@@ -100,23 +96,7 @@ export default defineNuxtModule<ModuleOptions>({
       labConfig.zlib,
       options.zlib && typeof options.zlib !== 'boolean' ? options.zlib : {},
     )
-    labPublicConfig.ws = defu<WSConfig, [WSConfig, WSConfig]>(
-      labPublicConfig.ws,
-      options.ws && typeof options.ws !== 'boolean' ? options.ws : {},
-      {
-        channels: {
-          defaults: [],
-          internal: [],
-        },
-      },
-    )
 
-    const appImports: Import[] = [
-      {
-        name: 'useMultiState',
-        from: resolve('./runtime/app/composables/multi-state'),
-      },
-    ]
     const serverImports: Import[] = [
       {
         name: 'useNitroHooks',
@@ -184,44 +164,8 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (options.devPages !== false)
       addDevPagesModule(nuxt, options.devPages === true ? undefined : options.devPages)
-
-    if (options.ws !== false) {
-      (nuxt.options.nitro.experimental ||= {}).websocket = true
-
-      appImports.push({
-        name: 'useWSState',
-        from: resolve('./runtime/app/composables/ws'),
-      })
-      appImports.push({
-        name: 'useWS',
-        from: resolve('./runtime/app/composables/ws'),
-      })
-
-      serverImports.push({
-        name: 'wsHooks',
-        from: resolve('./runtime/server/utils/ws'),
-      })
-      serverImports.push({
-        name: 'wsBroadcast',
-        from: resolve('./runtime/server/utils/ws'),
-      })
-      serverImports.push({
-        name: 'getWSChannels',
-        from: resolve('./runtime/server/utils/ws'),
-      })
-      serverImports.push({
-        name: 'defineReactiveWSHandler',
-        from: resolve('./runtime/server/utils/ws'),
-      })
-      // TODO: remove on next major
-      serverImports.push({
-        name: 'useWebSocketHandler',
-        from: resolve('./runtime/server/utils/ws'),
-      })
-    }
     // End check for enabled utils
 
-    addImports(appImports)
     addServerImports(serverImports)
   },
 })
@@ -235,11 +179,6 @@ declare module '@nuxt/schema' {
       s3?: S3DriverOptions
       kv?: RedisOptions
       zlib?: ZlibOptions
-    }
-  }
-  interface PublicRuntimeConfig {
-    lab: {
-      ws?: WSConfig
     }
   }
   interface NuxtHooks {

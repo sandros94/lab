@@ -20,14 +20,6 @@ export default defineNuxtConfig({
 
     zlib: true, // default `false`
 
-    ws: {
-      route: '/_ws',
-      channels: {
-        internal: ['_internal'],
-        defaults: ['session'],
-      },
-    }, // default `false`
-
     valibot: true, // default `false`
 
     monacoEditor: true, // default `false`
