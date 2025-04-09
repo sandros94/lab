@@ -1,6 +1,30 @@
 # Changelog
 
 
+## v0.2.0
+
+[compare changes](https://github.com/sandros94/lab/compare/v0.1.10...v0.2.0)
+
+### 🩹 Fixes
+
+- **devPages:** Remove `/index` leftover ([19765ba](https://github.com/sandros94/lab/commit/19765ba))
+
+### 📖 Documentation
+
+- Add tsdocs to array utils ([d4f3297](https://github.com/sandros94/lab/commit/d4f3297))
+
+### 🏡 Chore
+
+- ⚠️  Deprecate reactive websocket implementation ([826c223](https://github.com/sandros94/lab/commit/826c223))
+
+#### ⚠️ Breaking Changes
+
+- ⚠️  Deprecate reactive websocket implementation ([826c223](https://github.com/sandros94/lab/commit/826c223))
+
+### ❤️ Contributors
+
+- Sandro Circi ([@sandros94](https://github.com/sandros94))
+
 ## v0.1.10
 
 [compare changes](https://github.com/sandros94/lab/compare/v0.1.9...v0.1.10)
