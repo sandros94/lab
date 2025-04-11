@@ -12,11 +12,11 @@ export function addDevPagesModule(nuxt: Nuxt, options?: DevPagesModuleOptions) {
       pages.forEach((page) => {
         if (page.path.endsWith('.dev')) {
           page.path = page.path.replace('.dev', '').replace(/\/index$/, '')
-          page.name = page.name?.replace('.dev', '').replace(/\/index$/, '')
+          page.name = page.name?.replace('.dev', '').replace(/-index$/, '')
         }
         else if (page.path.endsWith('.demo')) {
           page.path = page.path.replace('.demo', '').replace(/\/index$/, '')
-          page.name = page.name?.replace('.demo', '').replace(/\/index$/, '')
+          page.name = page.name?.replace('.demo', '').replace(/-index$/, '')
         }
       })
     })
@@ -30,7 +30,7 @@ export function addDevPagesModule(nuxt: Nuxt, options?: DevPagesModuleOptions) {
         pages.forEach((page) => {
           if (page.path.endsWith('.demo')) {
             page.path = page.path.replace('.demo', '').replace(/\/index$/, '')
-            page.name = page.name?.replace('.demo', '').replace(/\/index$/, '')
+            page.name = page.name?.replace('.demo', '').replace(/-index$/, '')
           }
         })
       })
