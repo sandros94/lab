@@ -11,12 +11,11 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts",
+      "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
     }
   },
   "main": "./dist/module.mjs",
-  "types": "./dist/types.d.ts",
   "files": [
     "dist"
   ],
