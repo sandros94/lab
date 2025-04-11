@@ -16,6 +16,7 @@
     }
   },
   "main": "./dist/module.mjs",
+  "types": "./dist/types.d.ts",
   "files": [
     "dist"
   ],
