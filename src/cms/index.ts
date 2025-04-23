@@ -9,12 +9,12 @@ import {
   hasNuxtModule,
   installModule,
 } from '@nuxt/kit'
-import { logger } from './runtime/utils'
+import { logger } from '../runtime/utils'
 import {
   type StaticContentFile,
   normalizeWindowsPath,
   parseFile,
-} from './runtime/cms/internal'
+} from './runtime/internal'
 
 export interface CMSModuleOptions {
   dir?: string
@@ -26,7 +26,7 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
   const defOptions = defu(options, { dir: 'cms', addRoutes: true, prerender: true })
   const { resolve } = createResolver(import.meta.url)
 
-  nuxt.options.alias['#lab/cms'] = resolve('./runtime/cms/utils')
+  nuxt.options.alias['#lab/cms'] = resolve('./runtime/server/utils')
 
   const path = join(nuxt.options.rootDir, defOptions.dir)
   nuxt.options.nitro.serverAssets ||= []
@@ -43,27 +43,27 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
   addServerImports([
     {
       name: 'queryStaticContent',
-      from: resolve('./runtime/cms/utils'),
+      from: resolve('./runtime/server/utils'),
     },
     {
       name: 'listStaticContent',
-      from: resolve('./runtime/cms/utils'),
+      from: resolve('./runtime/server/utils'),
     },
     {
       name: 'useStaticContent',
-      from: resolve('./runtime/cms/utils'),
+      from: resolve('./runtime/server/utils'),
     },
   ])
   if (defOptions.addRoutes) {
     addServerHandler({
       route: '/_cms',
       method: 'get',
-      handler: resolve('./runtime/cms/routes/index'),
+      handler: resolve('./runtime/server/routes/index'),
     })
     addServerHandler({
       route: '/_cms/**',
       method: 'get',
-      handler: resolve('./runtime/cms/routes/nested'),
+      handler: resolve('./runtime/server/routes/nested'),
     })
   }
 

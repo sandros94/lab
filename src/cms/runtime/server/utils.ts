@@ -5,13 +5,15 @@ import { withLeadingSlash } from 'ufo'
 
 import {
   type StaticContentFile,
-  deNormalizeKey,
+  denormalizeKey,
+  normalizeKey,
   parseFile,
-} from './internal'
+} from '../internal'
 
 // @ts-expect-error `parseMarkdown` is imported from @nuxtjs/mdc
 import { parseMarkdown, useStorage } from '#imports'
 
+export { denormalizeKey, normalizeKey, parseFile }
 export type { StaticContentFile }
 export type StaticContent<T = unknown> = Omit<StaticContentFile, 'type'> & ({
   type: 'json'
@@ -73,7 +75,7 @@ export async function queryStaticContent<T>(path?: string, opts?: GetKeysOptions
   })
 
   for (const f of files) {
-    const fileKey = withLeadingSlash(deNormalizeKey(f))
+    const fileKey = withLeadingSlash(denormalizeKey(f))
 
     if (fileKey.startsWith(parsedRequest.path)) {
       const parsedFileKey = parseFile(fileKey)

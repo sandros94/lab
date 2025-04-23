@@ -49,7 +49,7 @@ export type StaticContentFile = StaticContentFileBase & StaticContentFileExt
 export function normalizeKey(key: string): string {
   return nK(key)
 }
-export function deNormalizeKey(key: string): string {
+export function denormalizeKey(key: string): string {
   return key.replace(/:/g, '/')
 }
 

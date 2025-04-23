@@ -15,12 +15,13 @@ import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
 import type { MemoryOptions } from './runtime/types'
-import type { StaticContentFile } from './runtime/cms/internal'
 
+import type { StaticContentFile } from './cms/runtime/internal'
 import {
   type CMSModuleOptions,
   addCMSModule,
 } from './cms'
+
 import {
   type DevPagesModuleOptions,
   addDevPagesModule,
