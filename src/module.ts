@@ -6,11 +6,9 @@ import {
   addServerPlugin,
   addServerImports,
   createResolver,
-  installModule,
 } from '@nuxt/kit'
 import { defu } from 'defu'
 import type { Import } from 'unimport'
-import { ensureDependencyInstalled } from 'nypm'
 import type { FSStorageOptions } from 'unstorage/drivers/fs'
 import type { S3DriverOptions } from 'unstorage/drivers/s3'
 import type { RedisOptions } from 'unstorage/drivers/redis'
@@ -35,7 +33,6 @@ export interface ModuleOptions {
   s3?: boolean | S3DriverOptions
   kv?: boolean | RedisOptions
   zlib?: boolean | ZlibOptions
-  valibot?: boolean
   monacoEditor?: boolean
   cms?: boolean | CMSModuleOptions
   devPages?: boolean | DevPagesModuleOptions
@@ -51,7 +48,6 @@ export default defineNuxtModule<ModuleOptions>({
     s3: false,
     kv: false,
     zlib: false,
-    valibot: false,
     monacoEditor: false,
     cms: false,
     devPages: false,
@@ -145,11 +141,6 @@ export default defineNuxtModule<ModuleOptions>({
       addServerPlugin(resolve('./runtime/server/plugins/kv'))
       if (options.zlib !== false) serverImports.push({ name: 'useKVZlib', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
       else serverImports.push({ name: 'useKV', as: 'useKV', from: resolve('./runtime/server/utils/kv') })
-    }
-
-    if (options.valibot !== false) {
-      await ensureDependencyInstalled('h3-valibot')
-        .then(async () => { await installModule('h3-valibot/nuxt') })
     }
 
     if (options.monacoEditor !== false) {

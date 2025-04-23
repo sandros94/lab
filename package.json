@@ -34,7 +34,6 @@
   "peerDependencies": {
     "@nuxtjs/mdc": ">=0.11",
     "@unhead/vue": ">=1.11",
-    "h3-valibot": ">=0.0.9",
     "ioredis": ">=5",
     "undio": ">=0.2",
     "unstorage": ">=1"
@@ -55,9 +54,6 @@
     "consola": {
       "optional": true
     },
-    "h3-valibot": {
-      "optional": true
-    },
     "ioredis": {
       "optional": true
     },
@@ -73,7 +69,6 @@
     "aws4fetch": "^1.0.20",
     "consola": "^3.4.2",
     "defu": "^6.1.4",
-    "h3-valibot": "^0.0.9",
     "ioredis": "^5.6.0",
     "nypm": "^0.6.0",
     "pathe": "^2.0.3",

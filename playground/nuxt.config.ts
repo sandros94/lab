@@ -26,8 +26,6 @@ export default defineNuxtConfig({
 
     zlib: true, // default `false`
 
-    valibot: true, // default `false`
-
     monacoEditor: true, // default `false`
 
     cms: true, // default `false`

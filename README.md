@@ -19,7 +19,6 @@ The goal of this project is mainly to simplify my prototyping process and learn 
 - `useS3` (optional): integrates any S3 compatible storage, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
 - `useKV` (optional): integrates any Redis compatible KV stores, build on-top of [`unstorage`](https://github.com/unjs/unstorage) and editable via `runtimeConfig` (server-only).
 - `useZlib` (optional): when enabled, it automatically provides gzip compression and decompression functions to `useMem`, `useFS` and `useKV` (server-only).
-- **Built-in validation** (optional): using [`valibot`](https://valibot.dev) and [`h3-valibot`](https://github.com/intevel/h3-valibot) under the hood (client and server).
 
 ## Quick Setup
 
@@ -40,7 +39,6 @@ export default defineNuxtConfig({
     s3: true,     // default false
     kv: true,     // default false
     zlib: true,   // default false
-    valibot: true // default false
     cms: true     // default false
   }
 })
