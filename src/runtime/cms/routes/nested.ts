@@ -1,4 +1,4 @@
-import { queryStaticContent } from './utils'
+import { queryStaticContent } from '../utils'
 import { createError, defineEventHandler } from '#imports'
 
 export default defineEventHandler(async (event) => {

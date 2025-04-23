@@ -5,11 +5,11 @@ export default defineNuxtConfig({
   future: { compatibilityVersion: 4 },
   compatibilityDate: '2024-12-15',
 
-  hooks: {
-    'lab:cms:scannedFiles'(files) {
-      console.log('Scanned files:', JSON.stringify(files, null, 2))
-    },
-  },
+  // hooks: {
+  //   'lab:cms:scannedFiles'(files) {
+  //     console.log('Scanned files:', JSON.stringify(files, null, 2))
+  //   },
+  // },
 
   lab: {
     cache: 'mem', // default `null`

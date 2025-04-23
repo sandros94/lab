@@ -1,20 +1,21 @@
 import { normalizeKey as nK } from 'unstorage'
-import { withLeadingSlash } from 'ufo'
+import { withLeadingSlash, withoutLeadingSlash } from 'ufo'
 
 type StaticContentFileType = 'json' | 'toml' | 'yaml' | 'markdown' | 'unknown'
 interface StaticContentFileBase {
   /**
    * The path to the file, relative to the CMS root.
-   * @example `/blog/1.md`
+   * @example `blog/1.md`
    */
   file: string
   /**
-   * The path to the page, relative to the CMS root.
+   * The normalized path of the file without the file extension.
+   * It is derived from the `file` property and is used to identify the file via `queryStaticContent` utility.
    * @example `/blog/1`
    */
   path: string
   /**
-   * The path to the directory, relative to the CMS root.
+   * The directory containing the file, derived from the `file` property.
    * @example `/blog`
    */
   dir: string
@@ -114,7 +115,7 @@ export function parseFile(file: string): StaticContentFile {
   const { basePath, env, ext } = _PATH_PARTS_RE.exec(normalizedFile)?.groups as { basePath: string, env?: 'dev' | 'demo', ext?: string }
 
   return {
-    file,
+    file: withoutLeadingSlash(file),
     path: parsePath(basePath),
     dir: withLeadingSlash(
       basePath

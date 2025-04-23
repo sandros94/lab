@@ -18,12 +18,12 @@ import {
 
 export interface CMSModuleOptions {
   dir?: string
-  addRoute?: boolean
+  addRoutes?: boolean
   prerender?: boolean
 }
 
 export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
-  const defOptions = defu(options, { dir: 'cms', addRoute: true, prerender: true })
+  const defOptions = defu(options, { dir: 'cms', addRoutes: true, prerender: true })
   const { resolve } = createResolver(import.meta.url)
 
   nuxt.options.alias['#lab/cms'] = resolve('./runtime/cms/utils')
@@ -54,27 +54,38 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
       from: resolve('./runtime/cms/utils'),
     },
   ])
-  if (defOptions.addRoute)
+  if (defOptions.addRoutes) {
+    addServerHandler({
+      route: '/_cms',
+      method: 'get',
+      handler: resolve('./runtime/cms/routes/index'),
+    })
     addServerHandler({
       route: '/_cms/**',
       method: 'get',
-      handler: resolve('./runtime/cms/routes'),
+      handler: resolve('./runtime/cms/routes/nested'),
     })
+  }
 
   const scannedFiles = scanCMSDirectory(nuxt, path)
 
-  if (defOptions.addRoute && defOptions.prerender && scannedFiles) {
+  if (defOptions.addRoutes && defOptions.prerender && scannedFiles.length) {
     nuxt.options.routeRules ||= {}
+    const prerenderedRoutes: string[] = []
+
     for (const file of scannedFiles) {
       if (file.env === 'dev' && !nuxt.options.dev) continue
 
-      if (file.type !== undefined) {
-        nuxt.options.routeRules[`/_cms/${file.path}`] = {
+      if (file.type !== undefined && file.type !== 'unknown') {
+        if (prerenderedRoutes.includes(file.path)) continue
+
+        nuxt.options.routeRules[join('/_cms', file.path)] = {
           prerender: true,
         }
+        prerenderedRoutes.push(file.path)
       }
 
-      nuxt.options.routeRules[`/_cms/${file.file}`] = {
+      nuxt.options.routeRules[join('/_cms', file.file)] = {
         prerender: true,
       }
     }

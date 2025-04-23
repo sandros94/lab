@@ -7,13 +7,131 @@ describe('cms', async () => {
     rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
   })
 
+  it('Successfully fetch an index file', async () => {
+    const data = await $fetch('/_cms')
+
+    expect(data).toMatchInlineSnapshot(`
+      {
+        "content": {
+          "body": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Home page",
+                  },
+                ],
+                "props": {
+                  "id": "home-page",
+                },
+                "tag": "h1",
+                "type": "element",
+              },
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "welcome",
+                  },
+                ],
+                "props": {},
+                "tag": "p",
+                "type": "element",
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "test page",
+                      },
+                    ],
+                    "props": {
+                      "href": "/cms/test",
+                    },
+                    "tag": "a",
+                    "type": "element",
+                  },
+                ],
+                "props": {},
+                "tag": "p",
+                "type": "element",
+              },
+            ],
+            "type": "root",
+          },
+          "data": {
+            "description": "welcome",
+            "title": "Home page",
+          },
+          "toc": {
+            "depth": 2,
+            "links": [],
+            "searchDepth": 2,
+            "title": "",
+          },
+        },
+        "dir": "/",
+        "ext": ".md",
+        "file": "index.md",
+        "path": "/",
+        "type": "markdown",
+      }
+    `)
+  })
+
+  it('Successfully fetch a nested index file', async () => {
+    const data = await $fetch('/_cms/nested')
+
+    expect(data).toMatchInlineSnapshot(`
+      {
+        "content": {
+          "body": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "nested index",
+                  },
+                ],
+                "props": {},
+                "tag": "p",
+                "type": "element",
+              },
+            ],
+            "type": "root",
+          },
+          "data": {
+            "description": "nested index",
+            "title": "",
+          },
+          "toc": {
+            "depth": 2,
+            "links": [],
+            "searchDepth": 2,
+            "title": "",
+          },
+        },
+        "dir": "/nested",
+        "ext": ".md",
+        "file": "nested/index.md",
+        "path": "/nested",
+        "type": "markdown",
+      }
+    `)
+  })
+
   it('Successfully fetch parsed yaml', async () => {
     const data = await $fetch(`/_cms/test`)
 
     expect(data).toStrictEqual({
+      dir: '/',
       ext: '.yaml',
       file: 'test.yaml',
-      path: 'test',
+      path: '/test',
       type: 'yaml',
       content: {
         services: {
@@ -53,9 +171,10 @@ describe('cms', async () => {
             - '@fourth'
             - '@fifth'
       ",
+        "dir": "/",
         "ext": ".yaml",
         "file": "test.yaml",
-        "path": "test",
+        "path": "/test",
         "type": "raw",
       }
     `)

@@ -67,32 +67,37 @@ export async function queryStaticContent<T>(path?: string, opts?: GetKeysOptions
 
   const storage = useStaticContent()
   const parsedRequest = parseFile(path)
-  const files = await storage.getKeys(parsedRequest.dir, opts)
+  const files = await storage.getKeys(parsedRequest.dir, {
+    ...opts,
+    maxDepth: opts?.maxDepth ?? (parsedRequest.path.match(/\//g) || []).length + 2, // dynamic depth
+  })
 
   for (const f of files) {
     const fileKey = withLeadingSlash(deNormalizeKey(f))
-    const parsedFile = parseFile(fileKey)
 
-    if (parsedRequest.ext && fileKey === path) {
-      return {
-        ...parsedFile,
-        type: 'raw' as const,
-        content: await storage.getItem(fileKey) as T extends unknown ? StorageValue : T,
+    if (fileKey.startsWith(parsedRequest.path)) {
+      const parsedFileKey = parseFile(fileKey)
+
+      if (parsedFileKey.path !== parsedRequest.path) {
+        continue // TODO: verify that I actually need this
       }
-    }
-    else if (!parsedRequest.ext) {
-      if (parsedFile.path === path) {
-        return parseFileContent<T>(fileKey, parsedFile)
-      }
+
+      return parsedRequest.ext
+        ? {
+            ...parsedFileKey,
+            type: 'raw' as const,
+            content: await storage.getItem(fileKey) as T extends unknown ? StorageValue : T,
+          }
+        : parseFileContent<T>(parsedFileKey)
     }
   }
 
-  async function parseFileContent<T>(fileKey: string, match: StaticContentFile): Promise<StaticContent<T>> {
-    switch (match.type) {
+  async function parseFileContent<T>(content: StaticContentFile): Promise<StaticContent<T>> {
+    switch (content.type) {
       case 'json': {
-        const data = await storage.getItem<string>(fileKey)
+        const data = await storage.getItem<string>(content.file)
         return {
-          ...match,
+          ...content,
           type: 'json' as const,
           content: data !== null
             ? JSON.parse(data) as T extends unknown ? Record<string, any> : T
@@ -100,9 +105,9 @@ export async function queryStaticContent<T>(path?: string, opts?: GetKeysOptions
         }
       }
       case 'toml': {
-        const data = await storage.getItem<string>(fileKey)
+        const data = await storage.getItem<string>(content.file)
         return {
-          ...match,
+          ...content,
           type: 'toml' as const,
           content: data !== null
             ? parseTOML<T extends unknown ? Record<string, any> : T>(data)
@@ -110,9 +115,9 @@ export async function queryStaticContent<T>(path?: string, opts?: GetKeysOptions
         }
       }
       case 'yaml': {
-        const data = await storage.getItem<string>(fileKey)
+        const data = await storage.getItem<string>(content.file)
         return {
-          ...match,
+          ...content,
           type: 'yaml' as const,
           content: data !== null
             ? parseYAML<T extends unknown ? Record<string, any> : T>(data)
@@ -120,9 +125,9 @@ export async function queryStaticContent<T>(path?: string, opts?: GetKeysOptions
         }
       }
       case 'markdown': {
-        const data = await storage.getItem<string>(fileKey)
+        const data = await storage.getItem<string>(content.file)
         return {
-          ...match,
+          ...content,
           type: 'markdown' as const,
           content: data !== null
             ? await parseMarkdown(data)
@@ -132,9 +137,9 @@ export async function queryStaticContent<T>(path?: string, opts?: GetKeysOptions
       // TODO: Add support for other file types
       default:
         return {
-          ...match,
-          type: match.ext ? 'unknown' : 'raw' as const,
-          content: await storage.getItem(fileKey) as T extends unknown ? StorageValue : T,
+          ...content,
+          type: content.ext ? 'unknown' : 'raw' as const,
+          content: await storage.getItem(content.file) as T extends unknown ? StorageValue : T,
         }
     }
   }
