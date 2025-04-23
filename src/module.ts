@@ -98,6 +98,18 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'useNitroHooks',
         from: resolve('./runtime/server/utils/hooks'),
       },
+      {
+        name: 'useValidatedParams',
+        from: resolve('./runtime/server/utils/validation'),
+      },
+      {
+        name: 'useValidatedQuery',
+        from: resolve('./runtime/server/utils/validation'),
+      },
+      {
+        name: 'useValidatedBody',
+        from: resolve('./runtime/server/utils/validation'),
+      },
       options.zlib !== false
         ? {
             as: 'useMem',

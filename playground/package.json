@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@sandros94/lab": "latest",
-    "nuxt": "^3.16.2"
+    "nuxt": "^3.16.2",
+    "valibot": "^1.0.0"
   }
 }

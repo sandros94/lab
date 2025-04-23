@@ -1,3 +1,4 @@
+import * as v from 'valibot'
 import { merge } from '#lab/utils'
 
 export default defineEventHandler(async (event) => {

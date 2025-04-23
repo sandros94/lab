@@ -1,3 +1,5 @@
+import * as v from 'valibot'
+
 export default defineEventHandler(async (event) => {
   const [{ id }, body] = await Promise.all([
     useValidatedParams(event, v.object({

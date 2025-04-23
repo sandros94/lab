@@ -64,6 +64,7 @@
   "dependencies": {
     "@nuxt/kit": "^3.16.2",
     "@nuxtjs/mdc": "^0.16.1",
+    "@standard-schema/spec": "^1.0.0",
     "@unhead/vue": "^2.0.8",
     "@vueuse/core": "^13.1.0",
     "aws4fetch": "^1.0.20",
