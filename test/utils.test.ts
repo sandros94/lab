@@ -1,51 +1,28 @@
-import { fileURLToPath } from 'node:url'
-
 import { createStorage } from 'unstorage'
 import { describe, it, expect, assert, afterAll, afterEach } from 'vitest'
-import { setup, $fetch } from '@nuxt/test-utils/e2e'
 
 import memoryDriver from '../src/runtime/utils/storage'
+import { merge, shuffle } from '../src/runtime/utils/array'
 
 describe('utils', async () => {
-  await setup({
-    rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
-  })
-
   describe('array', async () => {
     const names = ['Buonarroti', 'Da Vinci', 'di Niccolò di Betto Bardi', 'Sanzio']
     const fruits = ['Apple', 'Banana', 'Cherry']
 
-    it('Successfully merges names and fruits', async () => {
-      const data = await $fetch<string[]>('/api/utils/array/merge', {
-        method: 'POST',
-        body: {
-          arrayA: names,
-          arrayB: fruits,
-        },
-      })
+    it('Successfully merges names and fruits', () => {
+      const data = merge(names, fruits)
 
       assert.includeMembers([...names, ...fruits], data)
     })
 
-    it('Successfully shuffle names', async () => {
-      const data = await $fetch<string[]>('/api/utils/array/shuffle', {
-        method: 'POST',
-        body: {
-          array: names,
-        },
-      })
+    it('Successfully shuffle names', () => {
+      const data = shuffle(names)
 
       assert.includeMembers(names, data)
     })
 
     it('Successfully shuffle and pick 2 names', async () => {
-      const data = await $fetch<string[]>('/api/utils/array/shuffle', {
-        method: 'POST',
-        body: {
-          array: names,
-          limit: 2,
-        },
-      })
+      const data = shuffle(names, 2)
 
       assert.includeMembers(names, data)
       expect(data).toHaveLength(2)

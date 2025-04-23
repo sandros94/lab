@@ -5,6 +5,17 @@ import { setup, $fetch } from '@nuxt/test-utils/e2e'
 describe('fs', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
+    nuxtConfig: {
+      // @ts-expect-error `@nuxt/test-utils` types don't include local modules
+      lab: {
+        zlib: false,
+        kv: false,
+        s3: false,
+        monacoEditor: false,
+        cms: false,
+        devPages: false,
+      },
+    },
   })
 
   const dataId = 1994

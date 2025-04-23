@@ -5,6 +5,18 @@ import { setup, $fetch } from '@nuxt/test-utils/e2e'
 describe.runIf(process.env.NUXT_LAB_S3_ENDPOINT && process.env.NUXT_LAB_S3_REGION && process.env.NUXT_LAB_S3_BUCKET && process.env.NUXT_LAB_S3_ACCESS_KEY_ID && process.env.NUXT_LAB_S3_SECRET_ACCESS_KEY)('s3', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
+    nuxtConfig: {
+      // @ts-expect-error `@nuxt/test-utils` types don't include local modules
+      lab: {
+        s3: true,
+
+        zlib: false,
+        kv: false,
+        monacoEditor: false,
+        cms: false,
+        devPages: false,
+      },
+    },
   })
 
   const dataId = 1994

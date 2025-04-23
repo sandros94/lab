@@ -5,6 +5,18 @@ import { describe, it, expect } from 'vitest'
 describe('kv-zlib', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
+    nuxtConfig: {
+      // @ts-expect-error `@nuxt/test-utils` types don't include local modules
+      lab: {
+        zlib: true,
+        kv: true,
+
+        s3: false,
+        monacoEditor: false,
+        cms: false,
+        devPages: false,
+      },
+    },
   })
 
   const dataId = 1994
