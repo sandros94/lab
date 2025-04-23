@@ -1,19 +1,19 @@
-import { normalizeKey } from 'unstorage'
 import { parseTOML, parseYAML } from 'confbox'
 import type { GetKeysOptions, StorageValue } from 'unstorage'
 import type { MDCParserResult } from '@nuxtjs/mdc'
+import { withLeadingSlash } from 'ufo'
 
 import {
-  type ParseExtReturn,
-  fileExt,
-  parseExt,
+  type StaticContentFile,
+  deNormalizeKey,
+  parseFile,
 } from './internal'
 
 // @ts-expect-error `parseMarkdown` is imported from @nuxtjs/mdc
 import { parseMarkdown, useStorage } from '#imports'
 
-export type { ParseExtReturn }
-export type StaticContent<T = unknown> = Omit<ParseExtReturn, 'type'> & ({
+export type { StaticContentFile }
+export type StaticContent<T = unknown> = Omit<StaticContentFile, 'type'> & ({
   type: 'json'
   content: null | (T extends unknown ? Record<string, any> : T)
 } | {
@@ -34,7 +34,6 @@ export type StaticContent<T = unknown> = Omit<ParseExtReturn, 'type'> & ({
  * Retrieves and parses static content from the CMS assets storage.
  *
  * @param path - The path to the content file, with or without extension
- * @param base - Optional base directory to scope the search
  * @param opts - Optional configuration options for storage key retrieval
  * @typeParam T - The expected return type of the content
  *
@@ -58,31 +57,37 @@ export type StaticContent<T = unknown> = Omit<ParseExtReturn, 'type'> & ({
  * // With base directory
  * const posts = await queryStaticContent('latest', 'blog');
  */
-export async function queryStaticContent<T>(path: string, base?: string, opts?: GetKeysOptions): Promise<StaticContent<T> | undefined> {
-  if (!path) return undefined
+export async function queryStaticContent<T>(path?: string, opts?: GetKeysOptions): Promise<StaticContent<T> | undefined> {
+  if (!path || path === 'index' || path === '/index') {
+    path = '/'
+  }
+  else {
+    path = withLeadingSlash(path)
+  }
 
   const storage = useStaticContent()
-  const files = await storage.getKeys(base, opts)
-  const requestWithExt = !!fileExt(path).ext
-  const _path = normalizeKey(path)
+  const parsedRequest = parseFile(path)
+  const files = await storage.getKeys(parsedRequest.dir, opts)
 
-  for (const fileKey of files) {
-    if (requestWithExt && fileKey === _path) {
+  for (const f of files) {
+    const fileKey = withLeadingSlash(deNormalizeKey(f))
+    const parsedFile = parseFile(fileKey)
+
+    if (parsedRequest.ext && fileKey === path) {
       return {
-        ...parseExt(fileKey),
+        ...parsedFile,
         type: 'raw' as const,
         content: await storage.getItem(fileKey) as T extends unknown ? StorageValue : T,
       }
     }
-    else if (!requestWithExt) {
-      const p = parseExt(fileKey)
-      if (p.path === _path) {
-        return parseFile<T>(fileKey, p)
+    else if (!parsedRequest.ext) {
+      if (parsedFile.path === path) {
+        return parseFileContent<T>(fileKey, parsedFile)
       }
     }
   }
 
-  async function parseFile<T>(fileKey: string, match: ParseExtReturn): Promise<StaticContent<T>> {
+  async function parseFileContent<T>(fileKey: string, match: StaticContentFile): Promise<StaticContent<T>> {
     switch (match.type) {
       case 'json': {
         const data = await storage.getItem<string>(fileKey)
@@ -128,7 +133,7 @@ export async function queryStaticContent<T>(path: string, base?: string, opts?: 
       default:
         return {
           ...match,
-          type: 'unknown' as const,
+          type: match.ext ? 'unknown' : 'raw' as const,
           content: await storage.getItem(fileKey) as T extends unknown ? StorageValue : T,
         }
     }
@@ -141,7 +146,7 @@ export async function queryStaticContent<T>(path: string, base?: string, opts?: 
  * @param base - Optional base directory to scope the search
  * @param opts - Optional configuration options for storage key retrieval
  *
- * @returns A promise resolving to an array of `ParseExtReturn` objects containing:
+ * @returns A promise resolving to an array of `StaticContentFile` objects containing:
  *   - `file`: Original file path
  *   - `type`: Content type ('json', 'toml', 'yaml', 'markdown', or 'unknown')
  *   - `env`: Optional deployment target ('dev', 'demo', or undefined)
@@ -156,11 +161,11 @@ export async function queryStaticContent<T>(path: string, base?: string, opts?: 
  * // List content files in specific directory
  * const blogPosts = await listStaticContent('blog');
  */
-export async function listStaticContent(base?: string, opts?: GetKeysOptions): Promise<ParseExtReturn[]> {
+export async function listStaticContent(base?: string, opts?: GetKeysOptions): Promise<StaticContentFile[]> {
   const files = await useStaticContent().getKeys(base, opts)
 
   return files.map((file) => {
-    return parseExt(file)
+    return parseFile(file)
   })
 }
 

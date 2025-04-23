@@ -1,15 +1,63 @@
-export interface ParseExtReturn {
-  file: string | undefined
-  type: 'json' | 'toml' | 'yaml' | 'markdown' | 'unknown'
+import { normalizeKey as nK } from 'unstorage'
+import { withLeadingSlash } from 'ufo'
+
+type StaticContentFileType = 'json' | 'toml' | 'yaml' | 'markdown' | 'unknown'
+interface StaticContentFileBase {
+  /**
+   * The path to the file, relative to the CMS root.
+   * @example `/blog/1.md`
+   */
+  file: string
+  /**
+   * The path to the page, relative to the CMS root.
+   * @example `/blog/1`
+   */
+  path: string
+  /**
+   * The path to the directory, relative to the CMS root.
+   * @example `/blog`
+   */
+  dir: string
   env?: 'dev' | 'demo' | undefined
-  path?: string | undefined
-  ext?: string | undefined
+}
+type StaticContentFileExt = {
+  /**
+   * The file extension of the path.
+   * @example `.md`
+   */
+  ext?: undefined
+  /**
+   * The file type, if supported, used to determine how to parse the file.
+   * @example `markdown`
+   */
+  type?: undefined
+} | {
+  /**
+   * The file extension of the path.
+   * @example `.md`
+   */
+  ext: string
+  /**
+   * The file type, if supported, used to determine how to parse the file.
+   * @example `markdown`
+   */
+  type: StaticContentFileType
+}
+export type StaticContentFile = StaticContentFileBase & StaticContentFileExt
+
+export function normalizeKey(key: string): string {
+  return nK(key)
+}
+export function deNormalizeKey(key: string): string {
+  return key.replace(/:/g, '/')
 }
 
-export function parseExt(p: string): ParseExtReturn {
-  const match = fileExt(p)
-  let type: 'json' | 'toml' | 'yaml' | 'markdown' | 'unknown'
-  switch (match.ext) {
+function parseExt(ext?: string): StaticContentFileExt {
+  if (!ext) return { ext: undefined, type: undefined }
+
+  let type: StaticContentFileType | undefined = undefined
+
+  switch (ext) {
     case '.json':
       type = 'json'
       break
@@ -31,9 +79,15 @@ export function parseExt(p: string): ParseExtReturn {
   }
 
   return {
-    ...match,
+    ext,
     type,
   }
+}
+
+function parsePath(path: string) {
+  if (path === 'index' || path === '/index') return '/'
+
+  return withLeadingSlash(path.replace(/\/index$/, ''))
 }
 
 /**
@@ -44,21 +98,34 @@ export function parseExt(p: string): ParseExtReturn {
  */
 
 const _DRIVE_LETTER_START_RE = /^[a-z]:\//i
-const _EXTNAME_RE = /^(?<path>.*?)(?:\.(?<env>dev|demo))?(?<ext>\.[^./]+)?$/
 
-export function fileExt(file: string) {
-  if (file === '..') return { file: undefined }
-  const match = _EXTNAME_RE.exec(normalizeWindowsPath(file))
-  return (match && match.groups)
-    ? {
-        file,
-        env: match.groups.env as 'dev' | 'demo' | undefined,
-        path: match.groups.path,
-        ext: match.groups.ext,
-      }
-    : {
-        file,
-      }
+// It captures:
+// 1. `basePath`: The main part of the path before optional env/ext
+// 2. `env`: Optional environment (.dev or .demo)
+// 3. `ext`: Optional extension
+const _PATH_PARTS_RE = /^(?<basePath>.+?)(?:\.(?<env>dev|demo))?(?<ext>\.[^./\s]+)?$/
+
+export function parseFile(file: string): StaticContentFile {
+  if (!file) {
+    throw new Error('File path is required for parsing')
+  }
+
+  const normalizedFile = normalizeWindowsPath(file)
+  const { basePath, env, ext } = _PATH_PARTS_RE.exec(normalizedFile)?.groups as { basePath: string, env?: 'dev' | 'demo', ext?: string }
+
+  return {
+    file,
+    path: parsePath(basePath),
+    dir: withLeadingSlash(
+      basePath
+        .replace(/\/$/, '')
+        .split('/')
+        .slice(0, -1)
+        .join('/'),
+    ),
+    env,
+    ...parseExt(ext),
+  }
 }
 
 // Util to normalize windows paths to posix

@@ -17,7 +17,7 @@ import type { RedisOptions } from 'unstorage/drivers/redis'
 
 import { DEFAULT_KV_OPTIONS } from './runtime/options'
 import type { MemoryOptions } from './runtime/types'
-import type { ParseExtReturn } from './runtime/cms/internal'
+import type { StaticContentFile } from './runtime/cms/internal'
 
 import {
   type CMSModuleOptions,
@@ -182,7 +182,7 @@ declare module '@nuxt/schema' {
     }
   }
   interface NuxtHooks {
-    'lab:cms:scannedFiles': (scannedFiles: Record<string, ParseExtReturn>, nuxt: Nuxt) => void
+    'lab:cms:scannedFiles': (scannedFiles: StaticContentFile[], nuxt: Nuxt) => void
   }
 }
 

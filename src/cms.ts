@@ -11,9 +11,9 @@ import {
 } from '@nuxt/kit'
 import { logger } from './runtime/utils'
 import {
-  type ParseExtReturn,
+  type StaticContentFile,
   normalizeWindowsPath,
-  parseExt,
+  parseFile,
 } from './runtime/cms/internal'
 
 export interface CMSModuleOptions {
@@ -65,29 +65,29 @@ export function addCMSModule(nuxt: Nuxt, options?: CMSModuleOptions) {
 
   if (defOptions.addRoute && defOptions.prerender && scannedFiles) {
     nuxt.options.routeRules ||= {}
-    for (const [file, parsed] of scannedFiles) {
-      if (parsed.env === 'dev' && !nuxt.options.dev) continue
+    for (const file of scannedFiles) {
+      if (file.env === 'dev' && !nuxt.options.dev) continue
 
-      if (parsed.type !== 'unknown') {
-        nuxt.options.routeRules[`/_cms/${parsed.path}`] = {
+      if (file.type !== undefined) {
+        nuxt.options.routeRules[`/_cms/${file.path}`] = {
           prerender: true,
         }
       }
 
-      nuxt.options.routeRules[`/_cms/${file}`] = {
+      nuxt.options.routeRules[`/_cms/${file.file}`] = {
         prerender: true,
       }
     }
   }
 }
 
-function scanCMSDirectory(nuxt: Nuxt, path: string): Map<string, ParseExtReturn> | undefined {
+function scanCMSDirectory(nuxt: Nuxt, path: string): StaticContentFile[] {
   if (!existsSync(path)) {
     logger.error(`CMS directory not found!\nPlease create a directory \`"${relative(nuxt.options.rootDir, path)}"\` in your project root folder.`)
-    return undefined
+    return []
   }
 
-  const scannedFiles: Map<string, ParseExtReturn> = new Map()
+  const scannedFiles: StaticContentFile[] = []
   const files = readdirSync(path, { withFileTypes: true, recursive: true })
 
   for (const _file of files) {
@@ -95,10 +95,10 @@ function scanCMSDirectory(nuxt: Nuxt, path: string): Map<string, ParseExtReturn>
     const parent = normalizeWindowsPath(_file.parentPath)
     const file = relative(path, join(parent, normalizeWindowsPath(_file.name)))
 
-    const parsedFile = parseExt(file)
-    scannedFiles.set(file, parsedFile)
+    const parsedFile = parseFile(file)
+    scannedFiles.push(parsedFile)
   }
 
-  nuxt.callHook('lab:cms:scannedFiles', Object.fromEntries(scannedFiles), nuxt)
+  nuxt.callHook('lab:cms:scannedFiles', scannedFiles, nuxt)
   return scannedFiles
 }
