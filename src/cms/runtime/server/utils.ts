@@ -172,7 +172,7 @@ export async function listStaticContent(base?: string, opts?: GetKeysOptions): P
   const files = await useStaticContent().getKeys(base, opts)
 
   return files.map((file) => {
-    return parseFile(file)
+    return parseFile(denormalizeKey(file))
   })
 }
 
