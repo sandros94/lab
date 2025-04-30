@@ -113,12 +113,13 @@ export function parseFile(file: string): StaticContentFile {
 
   const normalizedFile = normalizeWindowsPath(file)
   const { basePath, env, ext } = _PATH_PARTS_RE.exec(normalizedFile)?.groups as { basePath: string, env?: 'dev' | 'demo', ext?: string }
+  const parsedBasePath = parsePath(basePath)
 
   return {
     file: withoutLeadingSlash(file),
-    path: parsePath(basePath),
+    path: parsedBasePath,
     dir: withLeadingSlash(
-      basePath
+      parsedBasePath
         .replace(/\/$/, '')
         .split('/')
         .slice(0, -1)
