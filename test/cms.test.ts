@@ -115,7 +115,7 @@ describe('cms', async () => {
             "title": "",
           },
         },
-        "dir": "/nested",
+        "dir": "/",
         "ext": ".md",
         "file": "nested/index.md",
         "path": "/nested",
