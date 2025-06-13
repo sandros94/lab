@@ -5,6 +5,6 @@ export default defineEventHandler(async (event) => {
     id: v.string(),
   }))
 
-  await useS3('playground-zlib').removeItem(`${id}.json`)
+  await useS3('playground-zlib').removeItem(`${id}.json.gz`)
   return { success: true }
 })

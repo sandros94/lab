@@ -33,6 +33,12 @@ describe.runIf(process.env.NUXT_LAB_S3_ENDPOINT && process.env.NUXT_LAB_S3_REGIO
     expect(data).toStrictEqual({ success: true })
   })
 
+  it('Has gzip data', async () => {
+    const data = await $fetch('/api/s3-zlib/')
+
+    expect(data).toContain('1994.json.gz')
+  })
+
   it('Gets gzip data', async () => {
     const data = await $fetch(`/api/s3-zlib/${dataId}`)
 
