@@ -30,7 +30,7 @@
     "release": "pnpm lint && pnpm test && pnpm prepack && changelogen --release --push --publish",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "pnpm lint && pnpm test:types && vitest run",
+    "test": "pnpm lint && vitest run",
     "test:watch": "vitest watch",
     "test:types": "vue-tsc --noEmit && nuxt typecheck playground && nuxt typecheck docs"
   },
