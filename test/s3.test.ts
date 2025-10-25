@@ -6,7 +6,6 @@ describe.runIf(process.env.NUXT_LAB_S3_ENDPOINT && process.env.NUXT_LAB_S3_REGIO
   await setup({
     rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
     nuxtConfig: {
-      // @ts-expect-error `@nuxt/test-utils` types don't include local modules
       lab: {
         s3: true,
 

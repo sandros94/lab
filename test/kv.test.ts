@@ -6,7 +6,6 @@ describe('kv', async () => {
   await setup({
     rootDir: fileURLToPath(new URL('../playground', import.meta.url)),
     nuxtConfig: {
-      // @ts-expect-error `@nuxt/test-utils` types don't include local modules
       lab: {
         kv: true,
 
