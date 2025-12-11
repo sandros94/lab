@@ -98,6 +98,7 @@
   },
   "packageManager": "pnpm@10.19.0",
   "resolutions": {
-    "@sandros94/lab": "workspace:*"
+    "@sandros94/lab": "workspace:*",
+    "node-forge": "^1.3.2"
   }
 }
