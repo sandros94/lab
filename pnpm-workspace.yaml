@@ -6,3 +6,6 @@ onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
   - unrs-resolver
+
+catalog:
+  nuxt: ^4.2.2
