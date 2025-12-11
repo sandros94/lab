@@ -65,11 +65,11 @@
     }
   },
   "dependencies": {
-    "@nuxt/kit": "^4.2.0",
+    "@nuxt/kit": "^4.2.2",
     "@nuxtjs/mdc": "^0.19.1",
     "@standard-schema/spec": "^1.0.0",
     "@unhead/vue": "^2.0.19",
-    "@vueuse/core": "^13.9.0",
+    "@vueuse/core": "^14.1.0",
     "aws4fetch": "^1.0.20",
     "consola": "^3.4.2",
     "defu": "^6.1.4",
@@ -78,13 +78,13 @@
     "pathe": "^2.0.3",
     "ufo": "^1.6.1",
     "undio": "^0.2.0",
-    "unstorage": "^1.17.1"
+    "unstorage": "^1.17.3"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^2.6.5",
+    "@nuxt/devtools": "^3.1.1",
     "@nuxt/eslint-config": "^1.12.1",
     "@nuxt/module-builder": "^1.0.2",
-    "@nuxt/schema": "^4.2.0",
+    "@nuxt/schema": "^4.2.2",
     "@nuxt/test-utils": "^3.21.0",
     "@nuxtlabs/monarch-mdc": "^0.8.1",
     "changelogen": "^0.6.2",
@@ -94,12 +94,15 @@
     "nuxt": "catalog:",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15",
-    "vue-tsc": "^3.1.2"
+    "vue-tsc": "^3.1.8"
   },
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@10.25.0",
   "resolutions": {
     "@sandros94/lab": "workspace:*",
+    "brace-expansion": "^2.0.2",
     "dompurify": "^3.2.4",
+    "glob": "^10.5.0",
+    "js-yaml": "^4.1.1",
     "node-forge": "^1.3.2"
   }
 }
